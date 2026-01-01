@@ -5,7 +5,7 @@ import { Button } from "./../ui/button";
 import { Input } from "./../ui/input";
 import { Label } from "./../ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./../ui/select";
-import { X, Plus, Minus } from "lucide-react";
+import { X, Plus, Minus, Repeat } from "lucide-react";
 
 const categories = {
   income: [
@@ -28,13 +28,14 @@ const categories = {
   ]
 };
 
-export default function TransactionForm({ onSubmit, onClose }) {
-  const [type, setType] = useState("expense");
-  const [formData, setFormData] = useState({
+export default function TransactionForm({ onSubmit, onClose, transaction }) {
+  const [type, setType] = useState(transaction?.type || "expense");
+  const [formData, setFormData] = useState(transaction || {
     description: "",
     amount: "",
     category: "",
-    date: new Date().toISOString().split('T')[0]
+    date: new Date().toISOString().split('T')[0],
+    isFixed: false
   });
 
   const handleSubmit = (e) => {
@@ -42,7 +43,8 @@ export default function TransactionForm({ onSubmit, onClose }) {
     onSubmit({
       ...formData,
       type,
-      amount: parseFloat(formData.amount)
+      amount: parseFloat(formData.amount),
+      date: new Date(formData.date).toISOString()
     });
   };
 
@@ -62,12 +64,15 @@ export default function TransactionForm({ onSubmit, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-slate-900">Nova Transação</h2>
+          <h2 className="text-xl font-bold text-slate-900">
+            {transaction ? "Editar Transação" : "Nova Transação"}
+          </h2>
           <Button variant="ghost" size="icon" onClick={onClose}>
             <X className="w-5 h-5" />
           </Button>
         </div>
 
+        {/* Seletor de Tipo */}
         <div className="flex gap-2 p-1 bg-slate-100 rounded-xl">
           <button
             type="button"
@@ -155,15 +160,30 @@ export default function TransactionForm({ onSubmit, onClose }) {
             />
           </div>
 
+          {/* CHECKBOX DE RECORRÊNCIA */}
+          <div className="flex items-center space-x-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+            <input 
+              type="checkbox" 
+              id="isFixed" 
+              checked={formData.isFixed}
+              onChange={(e) => setFormData({ ...formData, isFixed: e.target.checked })}
+              className="w-5 h-5 text-violet-600 rounded-md border-slate-300 focus:ring-violet-500"
+            />
+            <label htmlFor="isFixed" className="text-sm font-medium text-slate-700 flex items-center gap-2 cursor-pointer">
+              <Repeat className="w-4 h-4 text-slate-400" />
+              Repetir mensalmente (Despesa Fixa)
+            </label>
+          </div>
+
           <Button
             type="submit"
-            className={`w-full h-12 rounded-xl font-semibold ${
+            className={`w-full h-12 rounded-xl font-semibold text-white transition-colors ${
               type === "income" 
                 ? "bg-emerald-500 hover:bg-emerald-600" 
                 : "bg-slate-900 hover:bg-slate-800"
             }`}
           >
-            Adicionar {type === "income" ? "Receita" : "Despesa"}
+            {transaction ? "Salvar Alterações" : `Adicionar ${type === "income" ? "Receita" : "Despesa"}`}
           </Button>
         </form>
       </motion.div>

@@ -8,7 +8,7 @@ import { Wallet, TrendingUp, TrendingDown, Plus, ArrowRight } from "lucide-react
 import { Link } from "react-router-dom";
 import { createPageUrl } from "./../utils";
 import { startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
-
+import { checkAndGenerateRecurring } from "./../utils";
 import StatCard from "./../components/finance/StatCard";
 import TransactionItem from "./../components/finance/TransactionItem";
 import TransactionForm from "./../components/finance/TransactionForm";
@@ -23,6 +23,17 @@ export default function Dashboard() {
     queryKey: ["transactions"],
     queryFn: () => base44.entities.Transaction.list("-date", 100)
   });
+
+  React.useEffect(() => {
+    if (transactions.length > 0) {
+      checkAndGenerateRecurring(transactions)
+        .then(() => {
+          // Opcional: Invalida a query para mostrar as novas transações geradas
+          queryClient.invalidateQueries({ queryKey: ["transactions"] });
+        })
+        .catch(err => console.error("Erro ao gerar despesas fixas:", err));
+    }
+  }, [transactions, queryClient]);
 
   const { data: goals = [] } = useQuery({
     queryKey: ["goals"],

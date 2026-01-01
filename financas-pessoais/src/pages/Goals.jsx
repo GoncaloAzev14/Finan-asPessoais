@@ -231,7 +231,7 @@ export default function Goals() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-violet-600 to-purple-700 rounded-2xl p-6 text-white mb-8"
+          className="bg-linear-to-br from-violet-600 to-purple-700 rounded-2xl p-6 text-white mb-8"
         >
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <div>
@@ -287,7 +287,7 @@ export default function Goals() {
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="p-3 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 text-white">
+                      <div className="p-3 rounded-xl bg-linear-to-br from-violet-500 to-purple-600 text-white">
                         <Icon className="w-5 h-5" />
                       </div>
                       <div>
