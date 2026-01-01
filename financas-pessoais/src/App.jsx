@@ -7,8 +7,9 @@ import { useAuth } from "./contexts/AuthContext";
 import Login from './pages/Login';
 
 function App() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
+  if (loading) return <div>Carregando...</div>;
   if (!user) {
     return <Login />;
   }

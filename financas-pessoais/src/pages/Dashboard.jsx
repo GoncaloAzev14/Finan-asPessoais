@@ -45,6 +45,10 @@ export default function Dashboard() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       setShowForm(false);
+    },
+    onError: (error) => {
+      console.error("Erro ao criar transação:", error);
+      //alert("Erro ao salvar: Verifique se está logado ou as regras do Firestore.");
     }
   });
 
