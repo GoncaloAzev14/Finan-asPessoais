@@ -1,5 +1,5 @@
 // src/api/firestoreClient.js
-import { db } from "./firebase";
+import { db } from "./../../firebase";
 import { 
   collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy 
 } from "firebase/firestore";

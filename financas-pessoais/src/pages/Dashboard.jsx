@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { db as base44 } from "./../api/firestoreClient";
+import { firebaseDb as base44 } from "./../api/firestoreClient";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "./../components/ui/button";
 import { Wallet, TrendingUp, TrendingDown, Plus, ArrowRight } from "lucide-react";

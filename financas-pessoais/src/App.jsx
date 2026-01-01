@@ -3,8 +3,15 @@ import Layout from './layouts/Layout';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Goals from './pages/Goals';
+import { useAuth } from "./contexts/AuthContext";
 
 function App() {
+  const { user } = useAuth();
+
+  if (!user) {
+    return <Login />;
+  }
+
   return (
     <Router>
       <Routes>
