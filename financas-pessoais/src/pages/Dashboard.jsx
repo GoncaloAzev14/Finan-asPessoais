@@ -1,19 +1,19 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "./../base44Client";
 import { AnimatePresence, motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
+import { Button } from "./../components/ui/Button";
 import { Wallet, TrendingUp, TrendingDown, Plus, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { createPageUrl } from "./../utils";
 import { startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
 
-import StatCard from "@/components/finance/StatCard";
-import TransactionItem from "@/components/finance/TransactionItem";
-import TransactionForm from "@/components/finance/TransactionForm";
-import ExpenseChart from "@/components/finance/ExpenseChart";
-import GoalCard from "@/components/finance/GoalCard";
+import StatCard from "./../components/finance/StatCard";
+import TransactionItem from "./../components/finance/TransactionItem";
+import TransactionForm from "./../components/finance/TransactionForm";
+import ExpenseChart from "./../components/finance/ExpenseChart";
+import GoalCard from "./../components/finance/GoalCard";
 
 export default function Dashboard() {
   const [showForm, setShowForm] = useState(false);

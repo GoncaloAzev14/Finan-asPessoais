@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "./../base44Client";
 import { AnimatePresence, motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "./../components/ui/Button";
+import { Input } from "./../components/ui/Input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./../components/ui/Select";
 import { Plus, Search, Filter, Trash2 } from "lucide-react";
 import {
   AlertDialog,
@@ -16,11 +16,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "./../components/ui/AlertDialog";
 
-import TransactionItem from "@/components/finance/TransactionItem";
-import TransactionForm from "@/components/finance/TransactionForm";
-import MonthlyChart from "@/components/finance/MonthlyChart";
+import TransactionItem from "./../components/finance/TransactionItem";
+import TransactionForm from "./../components/finance/TransactionForm";
+import MonthlyChart from "./../components/finance/MonthlyChart";
 
 export default function Transactions() {
   const [showForm, setShowForm] = useState(false);
