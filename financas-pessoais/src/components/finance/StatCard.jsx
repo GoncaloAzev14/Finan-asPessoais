@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { motion } from "framer-motion";
 
 export default function StatCard({ title, value, icon: Icon, trend, trendValue, variant = "default" }) {

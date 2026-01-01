@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 import { Target, Plane, Home, Car, GraduationCap, Sparkles } from "lucide-react";

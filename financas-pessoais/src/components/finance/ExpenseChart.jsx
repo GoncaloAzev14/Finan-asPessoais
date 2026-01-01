@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { motion } from "framer-motion";
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";

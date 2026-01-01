@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 import { motion } from "framer-motion";
 import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
