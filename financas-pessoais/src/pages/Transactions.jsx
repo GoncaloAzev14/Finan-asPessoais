@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { base44 } from "./../base44Client";
+import { db as base44 } from "./../api/storageClient";
 import { AnimatePresence, motion } from "framer-motion";
-import Button from "./../components/ui/button";
-import { Input } from "./../components/ui/Input";
+import { Button } from "./../components/ui/button";
+import { Input } from "./../components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./../components/ui/select";
 import { Plus, Search, Filter, Trash2 } from "lucide-react";
 import {

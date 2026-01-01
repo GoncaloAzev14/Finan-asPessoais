@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { base44 } from "./../base44Client";
+import { db as base44 } from "./../api/storageClient";
 import { AnimatePresence, motion } from "framer-motion";
-import { Button } from "./../components/ui/Button";
+import { Button } from "./../components/ui/button";
 import { Wallet, TrendingUp, TrendingDown, Plus, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "./../utils";
