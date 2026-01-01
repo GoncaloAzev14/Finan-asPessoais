@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Goals from './pages/Goals';
 import { useAuth } from "./contexts/AuthContext";
+import Login from './pages/Login';
 
 function App() {
   const { user } = useAuth();
