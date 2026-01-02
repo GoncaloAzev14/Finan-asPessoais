@@ -10,14 +10,48 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Personal Finance Pro',
-        short_name: 'FinanceApp',
-        description: 'Manage goals and transactions',
-        theme_color: '#ffffff',
+        name: 'Finanças Pessoais',
+        short_name: 'Finanças',
+        description: 'Gerencie suas finanças pessoais',
+        theme_color: '#0f172a',
+        background_color: '#ffffff',
+        display: 'standalone',
+        orientation: 'portrait',
+        scope: '/Finan-asPessoais/',
+        start_url: '/Finan-asPessoais/',
         icons: [
-          { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+          {
+            src: 'pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable'
+          }
+        ]
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          }
         ]
       }
     })
@@ -27,5 +61,5 @@ export default defineConfig({
       "@": path.resolve(path.dirname(new URL(import.meta.url).pathname), "./src"),
     },
   },
-  base: "/finan-aspessoais/",
+  base: "/Finan-asPessoais/",
 })

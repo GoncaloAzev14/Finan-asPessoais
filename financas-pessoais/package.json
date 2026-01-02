@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://goncaloazev14.github.io/finan-aspessoais/",
+  "homepage": "https://goncaloazev14.github.io/Finan-asPessoais/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
