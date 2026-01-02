@@ -72,6 +72,20 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8 pb-8">
+
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div>
+          <p className="text-slate-500 mt-1">Visão geral das suas finanças</p>
+        </div>
+        <Button
+          onClick={() => setShowForm(true)}
+          className="bg-slate-900 hover:bg-slate-800 rounded-xl h-11 px-6"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Nova Transação
+        </Button>
+      </div>
+
       {/* 1. Stats Cards (Manteve-se no topo para contexto rápido) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard

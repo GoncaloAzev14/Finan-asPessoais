@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { firebaseDb as base44 } from "./../api/firestoreClient";
 import { motion, AnimatePresence } from "framer-motion";
-import { Wallet, Search, Trash2, Edit2, List, BarChart3 } from "lucide-react";
+import { Wallet, Search, Trash2, Edit2, List, BarChart3, Filter, ChevronDown } from "lucide-react";
 import TransactionItem from "./../components/finance/TransactionItem";
 import TransactionForm from "./../components/finance/TransactionForm";
 import ExpenseChart from "./../components/finance/ExpenseChart";
@@ -83,26 +83,39 @@ export default function Transactions() {
             {/* Cabeçalho e Filtros da Lista */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <h1 className="text-xl font-bold text-slate-900 tracking-tight">Histórico</h1>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="relative">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+
+              <div className="flex flex-row gap-2 w-full md:w-auto">
+                {/* Barra de Pesquisa */}
+                <div className="relative flex-1 sm:flex-none">
+                  <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
                     type="text"
                     placeholder="Pesquisar..."
-                    className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none w-full sm:w-64"
+                    className="pl-11 pr-4 h-11 bg-white border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/5 transition-all w-full sm:w-64"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
-                <select
-                  className="bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none"
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value)}
-                >
-                  <option value="all">Todos</option>
-                  <option value="income">Receitas</option>
-                  <option value="expense">Despesas</option>
-                </select>
+
+                {/* Filtro de Tipo */}
+                <div className="relative group min-w-30">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <Filter className="w-4 h-4 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
+                  </div>
+                  <select
+                    className="appearance-none w-full pl-9 pr-4 h-11 bg-white border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900/5 transition-all cursor-pointer"
+                    value={filterType}
+                    onChange={(e) => setFilterType(e.target.value)}
+                  >
+                    <option value="all">Todos</option>
+                    <option value="income">Receitas</option>
+                    <option value="expense">Despesas</option>
+                  </select>
+
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-slate-600 transition-colors">
+                    <ChevronDown className="w-4 h-4" />
+                  </div>
+                </div>
               </div>
             </div>
 
