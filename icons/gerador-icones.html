@@ -83,80 +83,70 @@
   <script>
     const sizes = [72, 96, 128, 144, 152, 180, 192, 384, 512];
     
-    function generateIcon(size) {
-      const canvas = document.createElement('canvas');
-      canvas.width = size;
-      canvas.height = size;
-      const ctx = canvas.getContext('2d');
-      
-      // Gradiente de fundo (verde)
-      const gradient = ctx.createLinearGradient(0, 0, size, size);
-      gradient.addColorStop(0, '#10b981');
-      gradient.addColorStop(1, '#14b8a6');
-      
-      // Fundo com gradiente
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, size, size);
-      
-      // Ícone de carteira (simplificado)
-      ctx.fillStyle = 'white';
-      ctx.strokeStyle = 'white';
-      ctx.lineWidth = size * 0.06;
-      
-      const centerX = size / 2;
-      const centerY = size / 2;
-      const iconSize = size * 0.5;
-      
-      // Desenhar retângulo da carteira
-      const rectWidth = iconSize * 0.8;
-      const rectHeight = iconSize * 0.6;
-      const rectX = centerX - rectWidth / 2;
-      const rectY = centerY - rectHeight / 2;
-      
-      ctx.fillRect(rectX, rectY, rectWidth, rectHeight);
-      
-      // Desenhar "R$" simplificado
-      ctx.fillStyle = '#10b981';
-      ctx.font = `bold ${size * 0.25}px Arial`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('R$', centerX, centerY);
-      
-      return canvas.toDataURL('image/png');
-    }
-    
-    function generateIcons() {
+    async function generateIcons() {
+      const fileInput = document.getElementById('svgInput');
       const preview = document.getElementById('preview');
+      
+      if (!fileInput.files[0]) {
+        alert("Por favor, selecione um arquivo SVG primeiro.");
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const svgUrl = URL.createObjectURL(file);
+      
       preview.style.display = 'block';
-      preview.innerHTML = '<h2>✅ Ícones Gerados</h2><p>Clique com o botão direito em cada imagem e selecione "Salvar imagem como..." para baixar.</p>';
+      preview.innerHTML = '<h2>✅ Ícones Gerados (Fundo Transparente)</h2><p>Clique nas imagens para baixar.</p>';
       
-      sizes.forEach(size => {
-        const iconData = generateIcon(size);
-        const div = document.createElement('div');
-        div.className = 'icon-preview';
+      const imgSource = new Image();
+      imgSource.src = svgUrl;
+
+      imgSource.onload = () => {
+        sizes.forEach(size => {
+          const canvas = document.createElement('canvas');
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          
+          // O fundo não é preenchido, mantendo a transparência do SVG original
+          
+          // Calcular dimensões para o SVG ocupar o espaço total ou com margem pequena
+          // Se quiser que o SVG encoste nas bordas, mude o padding para 0
+          const padding = 0; 
+          const drawSize = size - (padding * 2);
+          
+          ctx.drawImage(imgSource, padding, padding, drawSize, drawSize);
+          
+          const iconData = canvas.toDataURL('image/png');
+          
+          const div = document.createElement('div');
+          div.className = 'icon-preview';
+          
+          const imgPreview = document.createElement('img');
+          imgPreview.src = iconData;
+          imgPreview.style.backgroundColor = "#eee"; // Apenas para ver ícones brancos na prévia
+          imgPreview.width = Math.min(size, 120);
+          
+          const p = document.createElement('p');
+          p.textContent = `${size}x${size}px`;
+          
+          const link = document.createElement('a');
+          link.href = iconData;
+          link.download = size === 180 ? 'apple-touch-icon.png' : `icon-${size}x${size}.png`;
+          link.appendChild(imgPreview);
+          
+          div.appendChild(link);
+          div.appendChild(p);
+          preview.appendChild(div);
+        });
+
+        const successMsg = document.createElement('div');
+        successMsg.className = 'success';
+        successMsg.innerHTML = '<strong>✅ Concluído!</strong> Os ícones mantêm a transparência original do seu SVG.';
+        preview.appendChild(successMsg);
         
-        const img = document.createElement('img');
-        img.src = iconData;
-        img.width = Math.min(size, 150);
-        img.download = `icon-${size}x${size}.png`;
-        
-        const p = document.createElement('p');
-        p.textContent = `${size}x${size}px`;
-        
-        const link = document.createElement('a');
-        link.href = iconData;
-        link.download = size === 180 ? 'apple-touch-icon.png' : `icon-${size}x${size}.png`;
-        link.appendChild(img);
-        
-        div.appendChild(link);
-        div.appendChild(p);
-        preview.appendChild(div);
-      });
-      
-      const successMsg = document.createElement('div');
-      successMsg.className = 'success';
-      successMsg.innerHTML = '<strong>✅ Sucesso!</strong> Salve cada ícone na pasta <code>public/</code> do seu projeto com os nomes corretos.';
-      preview.appendChild(successMsg);
+        URL.revokeObjectURL(svgUrl);
+      };
     }
   </script>
 </body>
