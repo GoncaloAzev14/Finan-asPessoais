@@ -94,4 +94,18 @@ export const firebaseDb = {
     Goal: new FirestoreEntity('goals'),
     Category: new FirestoreEntity('categories'),
   },
+
+  async clearAllUserData() {
+    const userId = auth.currentUser?.uid;
+    if (!userId) return;
+
+    const collections = ['transactions', 'goals', 'categories'];
+    
+    for (const colName of collections) {
+      const q = query(collection(db, colName), where("userId", "==", userId));
+      const snapshot = await getDocs(q);
+      const deletePromises = snapshot.docs.map(document => deleteDoc(doc(db, colName, document.id)));
+      await Promise.all(deletePromises);
+    }
+  }
 };
