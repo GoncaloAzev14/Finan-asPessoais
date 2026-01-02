@@ -89,5 +89,6 @@ export const firebaseDb = {
   entities: {
     Transaction: new FirestoreEntity('transactions'),
     Goal: new FirestoreEntity('goals'),
+    Category: new FirestoreEntity('categories'),
   },
 };

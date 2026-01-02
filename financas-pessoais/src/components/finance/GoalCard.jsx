@@ -30,7 +30,7 @@ export default function GoalCard({ goal, index }) {
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 text-white">
+          <div className="p-2.5 rounded-xl bg-linear-to-br from-violet-500 to-purple-600 text-white">
             <Icon className="w-5 h-5" />
           </div>
           <div>

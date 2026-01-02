@@ -35,7 +35,7 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
     amount: "",
     category: "",
     date: new Date().toISOString().split('T')[0],
-    isFixed: false,       // The toggle state
+    isFixed: false,
     periodicity: "monthly" // Default selection for the dropdown
   });
 
@@ -208,7 +208,7 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
                     animate={{ opacity: 1 }}
                     className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg border border-blue-100"
                   >
-                    <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
                     <p className="text-xs text-blue-900">
                       Esta transação será automaticamente criada conforme a frequência escolhida.
                     </p>
