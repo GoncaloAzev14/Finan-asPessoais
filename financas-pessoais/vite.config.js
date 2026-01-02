@@ -24,19 +24,19 @@ export default defineConfig({
         start_url: '/Finan-asPessoais/',
         icons: [
           {
-            src: '/Finan-asPessoais/pwa-192x192.png',
+            src: './public/icons/icon-192x192.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: '/Finan-asPessoais/pwa-512x512.png',
+            src: './public/icons/icon-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: '/Finan-asPessoais/pwa-512x512.png',
+            src: './public/icons/icon-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable'

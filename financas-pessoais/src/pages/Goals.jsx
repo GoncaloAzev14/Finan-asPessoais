@@ -119,7 +119,7 @@ function GoalForm({ goal, onSubmit, onClose }) {
           <div className="space-y-2">
             <Label>Valor Alvo</Label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">R$</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">€</span>
               <Input
                 type="number"
                 step="0.01"
@@ -136,7 +136,7 @@ function GoalForm({ goal, onSubmit, onClose }) {
           <div className="space-y-2">
             <Label>Valor Atual Economizado</Label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">R$</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">€</span>
               <Input
                 type="number"
                 step="0.01"
@@ -236,13 +236,13 @@ export default function Goals() {
             <div>
               <p className="text-violet-200 text-sm">Total Economizado</p>
               <p className="text-3xl font-bold">
-                R$ {totalSaved.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                € {totalSaved.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </p>
             </div>
             <div className="text-right">
               <p className="text-violet-200 text-sm">Meta Total</p>
               <p className="text-xl font-semibold">
-                R$ {totalTarget.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                € {totalTarget.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </p>
             </div>
           </div>
@@ -322,13 +322,13 @@ export default function Goals() {
 
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-slate-500">
-                      R$ {(goal.current_amount || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      € {(goal.current_amount || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </span>
                     <span className="text-sm font-semibold text-violet-600">
                       {progress.toFixed(0)}%
                     </span>
                     <span className="text-sm font-medium text-slate-900">
-                      R$ {goal.target_amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      € {goal.target_amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </span>
                   </div>
                 </motion.div>
