@@ -10,49 +10,45 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
+      injectRegister: 'auto',
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
         name: 'Finanças Pessoais',
         short_name: 'Finanças',
         description: 'Gerencie suas finanças pessoais',
-        theme_color: '#0f172a',
-        background_color: '#ffffff',
+        theme_color: '#10b981',
+        background_color: '#0f172a',
         display: 'standalone',
-        orientation: 'portrait',
+        orientation: 'portrait-primary',
         scope: '/Finan-asPessoais/',
         start_url: '/Finan-asPessoais/',
         icons: [
           {
-            src: 'pwa-192x192.png',
+            src: '/Finan-asPessoais/pwa-192x192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any'
           },
           {
-            src: 'pwa-512x512.png',
+            src: '/Finan-asPessoais/pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable'
+            purpose: 'any'
+          },
+          {
+            src: '/Finan-asPessoais/pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable'
           }
         ]
       },
+      devOptions: {
+        enabled: true
+      },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-cache',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          }
-        ]
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        navigateFallback: null
       }
     })
   ],

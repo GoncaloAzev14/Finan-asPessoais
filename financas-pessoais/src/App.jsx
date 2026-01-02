@@ -12,46 +12,22 @@ function App() {
 
   if (loading) return <div>Carregando...</div>;
   if (!user) {
-    return <Login />;
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="*" element={<Navigate to="/login" />} />
+    </Routes>
   }
 
   return (
-    <Router>
+    <Layout>
       <Routes>
-        {/* Dashboard Route */}
-        <Route 
-          path="/" 
-          element={
-            <Layout currentPageName="Dashboard">
-              <Dashboard />
-            </Layout>
-          } 
-        />
-
-        {/* Transactions Route */}
-        <Route 
-          path="/transactions" 
-          element={
-            <Layout currentPageName="Transactions">
-              <Transactions />
-            </Layout>
-          } 
-        />
-
-        {/* Goals Route */}
-        <Route 
-          path="/goals" 
-          element={
-            <Layout currentPageName="Goals">
-              <Goals />
-            </Layout>
-          } 
-        />
-
-        {/* Fallback to Dashboard */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/transactions" element={<Transactions />} />
+        <Route path="/goals" element={<Goals />} />
+        <Route path="/categories" element={<CategorySettings />} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-    </Router>
+    </Layout>
   );
 }
 
