@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerador de Ícones PWA</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #10b981;
+      margin-bottom: 20px;
+    }
+    button {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover {
+      background: #059669;
+    }
+    #preview {
+      margin-top: 30px;
+      display: none;
+    }
+    .icon-preview {
+      display: inline-block;
+      margin: 10px;
+      text-align: center;
+    }
+    .icon-preview img {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    .icon-preview p {
+      margin-top: 5px;
+      font-size: 12px;
+      color: #666;
+    }
+    .success {
+      background: #d1fae5;
+      color: #065f46;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💰 Gerador de Ícones PWA - Finanças</h1>
+    <p>Clique no botão abaixo para gerar todos os ícones necessários para o PWA.</p>
+
+    <input
+      type="file"
+      id="svgInput"
+      accept=".svg"
+      style="margin-top: 20px;"
+    />
+
+    
+    <button onclick="generateIcons()">🎨 Gerar Todos os Ícones</button>
+    
+    <div id="preview"></div>
+  </div>
+
+  <script>
+    const sizes = [72, 96, 128, 144, 152, 180, 192, 384, 512];
+    
+    function generateIcon(size) {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      
+      // Gradiente de fundo (verde)
+      const gradient = ctx.createLinearGradient(0, 0, size, size);
+      gradient.addColorStop(0, '#10b981');
+      gradient.addColorStop(1, '#14b8a6');
+      
+      // Fundo com gradiente
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, size, size);
+      
+      // Ícone de carteira (simplificado)
+      ctx.fillStyle = 'white';
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = size * 0.06;
+      
+      const centerX = size / 2;
+      const centerY = size / 2;
+      const iconSize = size * 0.5;
+      
+      // Desenhar retângulo da carteira
+      const rectWidth = iconSize * 0.8;
+      const rectHeight = iconSize * 0.6;
+      const rectX = centerX - rectWidth / 2;
+      const rectY = centerY - rectHeight / 2;
+      
+      ctx.fillRect(rectX, rectY, rectWidth, rectHeight);
+      
+      // Desenhar "R$" simplificado
+      ctx.fillStyle = '#10b981';
+      ctx.font = `bold ${size * 0.25}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('R$', centerX, centerY);
+      
+      return canvas.toDataURL('image/png');
+    }
+    
+    function generateIcons() {
+      const preview = document.getElementById('preview');
+      preview.style.display = 'block';
+      preview.innerHTML = '<h2>✅ Ícones Gerados</h2><p>Clique com o botão direito em cada imagem e selecione "Salvar imagem como..." para baixar.</p>';
+      
+      sizes.forEach(size => {
+        const iconData = generateIcon(size);
+        const div = document.createElement('div');
+        div.className = 'icon-preview';
+        
+        const img = document.createElement('img');
+        img.src = iconData;
+        img.width = Math.min(size, 150);
+        img.download = `icon-${size}x${size}.png`;
+        
+        const p = document.createElement('p');
+        p.textContent = `${size}x${size}px`;
+        
+        const link = document.createElement('a');
+        link.href = iconData;
+        link.download = size === 180 ? 'apple-touch-icon.png' : `icon-${size}x${size}.png`;
+        link.appendChild(img);
+        
+        div.appendChild(link);
+        div.appendChild(p);
+        preview.appendChild(div);
+      });
+      
+      const successMsg = document.createElement('div');
+      successMsg.className = 'success';
+      successMsg.innerHTML = '<strong>✅ Sucesso!</strong> Salve cada ícone na pasta <code>public/</code> do seu projeto com os nomes corretos.';
+      preview.appendChild(successMsg);
+    }
+  </script>
+</body>
+</html>
