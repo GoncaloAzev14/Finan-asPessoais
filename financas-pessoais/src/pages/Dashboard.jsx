@@ -78,7 +78,6 @@ export default function Dashboard() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
             <p className="text-slate-500 mt-1">Visão geral das suas finanças</p>
           </div>
           <Button
