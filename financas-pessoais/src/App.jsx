@@ -5,6 +5,7 @@ import Transactions from './pages/Transactions';
 import Goals from './pages/Goals';
 import { useAuth } from "./contexts/AuthContext";
 import Login from './pages/Login';
+import CategorySettings from "./pages/CategorySettings";
 
 function App() {
   const { user, loading } = useAuth();
@@ -49,6 +50,7 @@ function App() {
 
         {/* Fallback to Dashboard */}
         <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/categories" element={<CategorySettings />} />
       </Routes>
     </Router>
   );

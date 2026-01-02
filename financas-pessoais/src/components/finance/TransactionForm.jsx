@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { firebaseDb } from "./../../api/firestoreClient";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./../ui/button";
 import { Input } from "./../ui/input";
@@ -7,7 +9,8 @@ import { Label } from "./../ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./../ui/select";
 import { X, Plus, Minus, Repeat, Info } from "lucide-react";
 
-const categories = {
+// Categorias padrão caso a base de dados ainda não tenha categorias personalizadas
+const defaultCategories = {
   income: [
     { value: "salary", label: "Salário" },
     { value: "freelance", label: "Freelance" },
@@ -30,13 +33,28 @@ const categories = {
 
 export default function TransactionForm({ onSubmit, onClose, transaction }) {
   const [type, setType] = useState(transaction?.type || "expense");
+  
+  // 1. Query para carregar as categorias dinâmicas do Firestore
+  const { data: dbCategories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => firebaseDb.entities.Category.list()
+  });
+
+  // 2. Filtragem de categorias baseada no tipo (Receita/Despesa)
+  const currentCategories = dbCategories.filter(c => c.type === type);
+
+  // 3. Define as categorias finais: usa as do DB se existirem, senão usa as padrão
+  const finalCategories = currentCategories.length > 0 
+    ? currentCategories 
+    : defaultCategories[type];
+
   const [formData, setFormData] = useState(transaction || {
     description: "",
     amount: "",
     category: "",
     date: new Date().toISOString().split('T')[0],
     isFixed: false,
-    periodicity: "monthly" // Default selection for the dropdown
+    periodicity: "monthly"
   });
 
   const handleSubmit = (e) => {
@@ -46,6 +64,7 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
       type,
       amount: parseFloat(formData.amount),
       date: new Date(formData.date).toISOString(),
+      // Garante que a periodicidade é "none" se o checkbox de recorrência estiver desativado
       periodicity: formData.isFixed ? formData.periodicity : "none"
     });
   };
@@ -74,7 +93,7 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
           </Button>
         </div>
 
-        {/* Type Selector */}
+        {/* Seletor de Tipo (Despesa / Receita) */}
         <div className="flex gap-2 p-1 bg-slate-100 rounded-xl">
           <button
             type="button"
@@ -142,8 +161,8 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
                 <SelectValue placeholder="Selecione uma categoria" />
               </SelectTrigger>
               <SelectContent>
-                {categories[type].map((cat) => (
-                  <SelectItem key={cat.value} value={cat.value}>
+                {finalCategories.map((cat) => (
+                  <SelectItem key={cat.id || cat.value} value={cat.value}>
                     {cat.label}
                   </SelectItem>
                 ))}
@@ -162,7 +181,7 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
             />
           </div>
 
-          {/* RECURRENCE SECTION */}
+          {/* SECÇÃO DE RECORRÊNCIA */}
           <div className="space-y-3">
             <div className="flex items-center space-x-3 p-4 bg-violet-50 rounded-xl border border-violet-100">
               <input 

@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { firebaseDb as base44 } from "./../api/firestoreClient";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "./../components/ui/button";
-import { Wallet, TrendingUp, TrendingDown, Plus, ArrowRight } from "lucide-react";
+import { Wallet, TrendingUp, TrendingDown, Plus, ArrowRight, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "./../utils";
 import { startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
@@ -14,9 +14,11 @@ import TransactionItem from "./../components/finance/TransactionItem";
 import TransactionForm from "./../components/finance/TransactionForm";
 import ExpenseChart from "./../components/finance/ExpenseChart";
 import GoalCard from "./../components/finance/GoalCard";
+import CategoryForm from "./../components/finance/CategoryForm";
 
 export default function Dashboard() {
   const [showForm, setShowForm] = useState(false);
+  const [showCategoryForm, setShowCategoryForm] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: transactions = [], isLoading: loadingTransactions } = useQuery({
@@ -84,13 +86,23 @@ export default function Dashboard() {
             <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
             <p className="text-slate-500 mt-1">Visão geral das suas finanças</p>
           </div>
-          <Button
-            onClick={() => setShowForm(true)}
-            className="bg-slate-900 hover:bg-slate-800 rounded-xl h-11 px-6"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Nova Transação
-          </Button>
+          <div className="flex gap-2">
+            {/* Botão de Categorias */}
+            <Link to="/categories">
+              <Button variant="outline" className="rounded-xl h-11 px-4">
+                <Settings className="w-4 h-4 mr-2" />
+                Categorias
+              </Button>
+            </Link>
+
+            <Button
+              onClick={() => setShowForm(true)}
+              className="bg-slate-900 hover:bg-slate-800 rounded-xl h-11 px-6"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Nova Transação
+            </Button>
+          </div>
         </div>
 
         {/* Stats */}
@@ -191,6 +203,13 @@ export default function Dashboard() {
             onSubmit={(data) => createMutation.mutate(data)}
             onClose={() => setShowForm(false)}
           />
+        )}
+      </AnimatePresence>
+
+      {/* Popup de Categorias */}
+      <AnimatePresence>
+        {showCategoryForm && (
+          <CategoryForm onClose={() => setShowCategoryForm(false)} />
         )}
       </AnimatePresence>
     </div>

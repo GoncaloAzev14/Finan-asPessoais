@@ -2,13 +2,14 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { LayoutDashboard, ArrowLeftRight, Target, Wallet } from "lucide-react";
+import { LayoutDashboard, ArrowLeftRight, Target, Wallet, Settings } from "lucide-react";
 import { motion } from "framer-motion";
 
 const navItems = [
   { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
   { name: "Transações", icon: ArrowLeftRight, page: "Transactions" },
-  { name: "Metas", icon: Target, page: "Goals" }
+  { name: "Metas", icon: Target, page: "Goals" },
+  { name: "Categorias", icon: Settings, page: "Categories" }
 ];
 
 export default function Layout({ children, currentPageName }) {
@@ -52,7 +53,7 @@ export default function Layout({ children, currentPageName }) {
       <header className="lg:hidden fixed top-0 left-0 right-0 bg-white border-b border-slate-100 z-40">
         <div className="flex items-center justify-center h-16 px-4">
           <Link to={createPageUrl("Dashboard")} className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
               <Wallet className="w-4 h-4 text-white" />
             </div>
             <span className="text-lg font-bold text-slate-900">Finanças</span>
