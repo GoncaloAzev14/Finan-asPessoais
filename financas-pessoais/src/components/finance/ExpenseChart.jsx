@@ -78,7 +78,7 @@ export default function ExpenseChart({ transactions }) {
                 ))}
               </Pie>
               <Tooltip
-                formatter={(value) => `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                formatter={(value) => `€ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -97,7 +97,7 @@ export default function ExpenseChart({ transactions }) {
               </div>
               <div className="text-right">
                 <span className="text-sm font-medium text-slate-900">
-                  R$ {item.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  € {item.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </span>
                 <span className="text-xs text-slate-400 ml-2">
                   {((item.value / total) * 100).toFixed(0)}%

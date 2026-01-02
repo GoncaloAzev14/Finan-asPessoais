@@ -84,7 +84,7 @@ export default function MonthlyChart({ transactions }) {
               tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
             />
             <Tooltip
-              formatter={(value) => `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+              formatter={(value) => `€ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
               contentStyle={{
                 borderRadius: '12px',
                 border: '1px solid #e2e8f0',

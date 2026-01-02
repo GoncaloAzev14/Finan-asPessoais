@@ -64,7 +64,7 @@ export default function TransactionItem({ transaction, index }) {
         </div>
       </div>
       <p className={`font-semibold ${isIncome ? 'text-emerald-600' : 'text-slate-900'}`}>
-        {isIncome ? '+' : '-'} R$ {transaction.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+        {isIncome ? '+' : '-'} € {transaction.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
       </p>
     </motion.div>
   );

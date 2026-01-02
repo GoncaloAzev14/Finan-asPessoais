@@ -49,16 +49,16 @@ export default function GoalCard({ goal, index }) {
 
       <div className="flex items-center justify-between text-sm">
         <span className="text-slate-500">
-          R$ {(goal.current_amount || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+          € {(goal.current_amount || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
         </span>
         <span className="font-medium text-slate-900">
-          R$ {goal.target_amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+          € {goal.target_amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
         </span>
       </div>
       
       {remaining > 0 && (
         <p className="text-xs text-slate-400 mt-2">
-          Faltam R$ {remaining.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+          Faltam € {remaining.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
         </p>
       )}
     </motion.div>

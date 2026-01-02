@@ -115,19 +115,19 @@ export default function Transactions() {
           <div className="bg-white px-4 py-2 rounded-xl border border-slate-100">
             <span className="text-slate-500">Receitas: </span>
             <span className="font-semibold text-emerald-600">
-              R$ {totalIncome.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              € {totalIncome.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
             </span>
           </div>
           <div className="bg-white px-4 py-2 rounded-xl border border-slate-100">
             <span className="text-slate-500">Despesas: </span>
             <span className="font-semibold text-rose-600">
-              R$ {totalExpense.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              € {totalExpense.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
             </span>
           </div>
           <div className="bg-white px-4 py-2 rounded-xl border border-slate-100">
             <span className="text-slate-500">Saldo: </span>
             <span className={`font-semibold ${totalIncome - totalExpense >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
-              R$ {(totalIncome - totalExpense).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              € {(totalIncome - totalExpense).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
             </span>
           </div>
         </div>
