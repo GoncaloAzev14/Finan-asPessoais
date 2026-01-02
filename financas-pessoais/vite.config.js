@@ -27,4 +27,5 @@ export default defineConfig({
       "@": path.resolve(path.dirname(new URL(import.meta.url).pathname), "./src"),
     },
   },
+  base: "/finan-aspessoais/",
 })

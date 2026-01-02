@@ -31,7 +31,7 @@ export default function Transactions() {
 
   const { data: transactions = [], isLoading } = useQuery({
     queryKey: ["transactions"],
-    queryFn: () => base44.entities.Transaction.list("-date", 200)
+    queryFn: () => base44.entities.Transaction.list()
   });
 
   const createMutation = useMutation({

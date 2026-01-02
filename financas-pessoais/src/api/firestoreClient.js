@@ -16,21 +16,24 @@ class FirestoreEntity {
       console.error("Usuário não autenticado");
       return [];
     }
-
+  
     try {
       const q = query(
         this.collectionRef, 
         where("userId", "==", userId)
+        // Nota: Não usamos orderBy aqui para evitar a necessidade de criar índices manuais no Firebase console
       );
       
       const querySnapshot = await getDocs(q);
       const docs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       
-      // Ordenar DEPOIS de recuperar os dados
+      // ORDENAÇÃO NO CLIENTE (Mais recente primeiro)
       return docs.sort((a, b) => {
-        const dateA = new Date(a.date || a.created_at);
-        const dateB = new Date(b.date || b.created_at);
-        return dateB - dateA; // Ordem decrescente (mais recente primeiro)
+        // Prioridade para o campo 'date', fallback para 'created_at'
+        const timeA = new Date(a.date || a.created_at || 0).getTime();
+        const timeB = new Date(b.date || b.created_at || 0).getTime();
+        
+        return timeB - timeA; // B - A garante a ordem decrescente (mais recente no topo)
       });
     } catch (error) {
       console.error("Erro ao listar documentos:", error);

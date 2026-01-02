@@ -22,7 +22,7 @@ export default function Dashboard() {
 
   const { data: transactions = [], isLoading: loadingTransactions } = useQuery({
     queryKey: ["transactions"],
-    queryFn: () => base44.entities.Transaction.list("-date", 100)
+    queryFn: () => base44.entities.Transaction.list()
   });
 
   React.useEffect(() => {
@@ -46,10 +46,6 @@ export default function Dashboard() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       setShowForm(false);
-    },
-    onError: (error) => {
-      console.error("Erro ao criar transação:", error);
-      //alert("Erro ao salvar: Verifique se está logado ou as regras do Firestore.");
     }
   });
 
