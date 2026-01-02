@@ -1,15 +1,14 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // Adicionado useEffect
 import { useQuery } from "@tanstack/react-query";
 import { firebaseDb } from "./../../api/firestoreClient";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "./../ui/button";
+import { Button } from "./../ui/button"; // Verificado caminho do componente
 import { Input } from "./../ui/input";
 import { Label } from "./../ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./../ui/select";
 import { X, Plus, Minus, Repeat, Info } from "lucide-react";
 
-// Categorias padrão caso a base de dados ainda não tenha categorias personalizadas
 const defaultCategories = {
   income: [
     { value: "salary", label: "Salário" },
@@ -32,39 +31,41 @@ const defaultCategories = {
 };
 
 export default function TransactionForm({ onSubmit, onClose, transaction }) {
+  // O estado 'type' controla a cor das abas e a cor do botão final
   const [type, setType] = useState(transaction?.type || "expense");
   
-  // 1. Query para carregar as categorias dinâmicas do Firestore
   const { data: dbCategories = [] } = useQuery({
     queryKey: ["categories"],
     queryFn: () => firebaseDb.entities.Category.list()
   });
 
-  // 2. Filtragem de categorias baseada no tipo (Receita/Despesa)
   const currentCategories = dbCategories.filter(c => c.type === type);
-
-  // 3. Define as categorias finais: usa as do DB se existirem, senão usa as padrão
   const finalCategories = currentCategories.length > 0 
     ? currentCategories 
     : defaultCategories[type];
 
-  const [formData, setFormData] = useState(transaction || {
-    description: "",
-    amount: "",
-    category: "",
-    date: new Date().toISOString().split('T')[0],
-    isFixed: false,
-    periodicity: "monthly"
+  const [formData, setFormData] = useState({
+    description: transaction?.description || "",
+    amount: transaction?.amount || "",
+    category: transaction?.category || "",
+    date: transaction?.date ? new Date(transaction.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+    isFixed: transaction?.isFixed || false,
+    periodicity: transaction?.periodicity || "monthly"
   });
+
+  // Importante: Limpar a categoria se mudar de tipo para não enviar uma categoria de despesa numa receita
+  const handleTypeChange = (newType) => {
+    setType(newType);
+    setFormData(prev => ({ ...prev, category: "" }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit({
       ...formData,
-      type,
+      type, // Usa o estado 'type' atualizado pelas abas
       amount: parseFloat(formData.amount),
       date: new Date(formData.date).toISOString(),
-      // Garante que a periodicidade é "none" se o checkbox de recorrência estiver desativado
       periodicity: formData.isFixed ? formData.periodicity : "none"
     });
   };
@@ -81,88 +82,88 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 100, opacity: 0 }}
-        className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-md p-6 space-y-6 max-h-[90vh] overflow-y-auto"
+        className="bg-white rounded-t-[2.5rem] sm:rounded-4xl w-full max-w-md p-6 space-y-6 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between px-2">
           <h2 className="text-xl font-bold text-slate-900">
             {transaction ? "Editar Transação" : "Nova Transação"}
           </h2>
-          <Button variant="ghost" size="icon" onClick={onClose}>
+          <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full">
             <X className="w-5 h-5" />
           </Button>
         </div>
 
-        {/* Seletor de Tipo (Despesa / Receita) */}
-        <div className="flex gap-2 p-1 bg-slate-100 rounded-xl">
+        {/* Seletor de Tipo - Agora usa handleTypeChange */}
+        <div className="flex gap-2 p-1 bg-slate-100 rounded-2xl">
           <button
             type="button"
-            onClick={() => setType("expense")}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-medium transition-all ${
+            onClick={() => handleTypeChange("expense")}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm transition-all ${
               type === "expense" 
                 ? "bg-white text-slate-900 shadow-sm" 
                 : "text-slate-500 hover:text-slate-700"
             }`}
           >
             <Minus className="w-4 h-4" />
-            Despesa
+            DESPESA
           </button>
           <button
             type="button"
-            onClick={() => setType("income")}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-medium transition-all ${
+            onClick={() => handleTypeChange("income")}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm transition-all ${
               type === "income" 
                 ? "bg-white text-emerald-600 shadow-sm" 
                 : "text-slate-500 hover:text-slate-700"
             }`}
           >
             <Plus className="w-4 h-4" />
-            Receita
+            RECEITA
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 px-2">
+          {/* ... campos de input (Descrição, Valor, Categoria, Data) mantêm-se iguais ... */}
           <div className="space-y-2">
-            <Label>Descrição</Label>
+            <Label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Descrição</Label>
             <Input
               placeholder="Ex: Supermercado"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="h-12 rounded-xl"
+              className="h-14 rounded-2xl bg-slate-50 border-none"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label>Valor</Label>
+            <Label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Valor</Label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">R$</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">€</span>
               <Input
                 type="number"
                 step="0.01"
-                min="0"
                 placeholder="0,00"
                 value={formData.amount}
                 onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                className="h-12 rounded-xl pl-12 text-lg font-semibold"
+                className="h-14 rounded-2xl bg-slate-50 border-none pl-10 text-lg font-bold"
                 required
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label>Categoria</Label>
+            <Label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Categoria</Label>
             <Select
               value={formData.category}
               onValueChange={(value) => setFormData({ ...formData, category: value })}
               required
             >
-              <SelectTrigger className="h-12 rounded-xl">
-                <SelectValue placeholder="Selecione uma categoria" />
+              <SelectTrigger className="h-14 rounded-2xl bg-slate-50 border-none">
+                <SelectValue placeholder="Seleciona uma categoria" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="rounded-2xl border-slate-100">
                 {finalCategories.map((cat) => (
-                  <SelectItem key={cat.id || cat.value} value={cat.value}>
+                  <SelectItem key={cat.id || cat.value} value={cat.value} className="rounded-lg">
                     {cat.label}
                   </SelectItem>
                 ))}
@@ -171,30 +172,34 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
           </div>
 
           <div className="space-y-2">
-            <Label>Data</Label>
+            <Label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Data</Label>
             <Input
               type="date"
               value={formData.date}
               onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              className="h-12 rounded-xl"
+              className="h-14 rounded-2xl bg-slate-50 border-none"
               required
             />
           </div>
 
           {/* SECÇÃO DE RECORRÊNCIA */}
-          <div className="space-y-3">
-            <div className="flex items-center space-x-3 p-4 bg-violet-50 rounded-xl border border-violet-100">
-              <input 
-                type="checkbox" 
-                id="isFixed" 
-                checked={formData.isFixed}
-                onChange={(e) => setFormData({ ...formData, isFixed: e.target.checked })}
-                className="w-5 h-5 text-violet-600 rounded-md border-slate-300 focus:ring-violet-500"
-              />
-              <label htmlFor="isFixed" className="text-sm font-medium text-slate-700 flex items-center gap-2 cursor-pointer flex-1">
-                <Repeat className="w-4 h-4 text-violet-500" />
-                Transação Recorrente
-              </label>
+          <div className="pt-2">
+            <div
+              onClick={() => setFormData({ ...formData, isFixed: !formData.isFixed })}
+              className={`flex items-center gap-3 p-4 rounded-2xl border transition-all cursor-pointer ${
+                formData.isFixed ? "bg-violet-50 border-violet-100" : "bg-slate-50 border-transparent"
+              }`}
+            >
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${
+                formData.isFixed ? "bg-violet-500 text-white" : "bg-slate-200 text-slate-400"
+              }`}>
+                <Repeat className="w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-slate-700">Transação Recorrente</p>
+                <p className="text-[10px] text-slate-400 uppercase font-bold">Automatizar lançamentos</p>
+              </div>
+              <input type="checkbox" checked={formData.isFixed} readOnly className="hidden" />
             </div>
             
             <AnimatePresence>
@@ -203,49 +208,40 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="space-y-3 overflow-hidden"
+                  className="space-y-3 pt-3"
                 >
-                  <div className="space-y-2">
-                    <Label>Frequência da Recorrência</Label>
-                    <Select
-                      value={formData.periodicity}
-                      onValueChange={(value) => setFormData({ ...formData, periodicity: value })}
-                    >
-                      <SelectTrigger className="h-12 rounded-xl bg-white border-slate-200">
-                        <SelectValue placeholder="Selecione a frequência" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="daily">Diária</SelectItem>
-                        <SelectItem value="weekly">Semanal</SelectItem>
-                        <SelectItem value="monthly">Mensal</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg border border-blue-100"
+                  <Select
+                    value={formData.periodicity}
+                    onValueChange={(value) => setFormData({ ...formData, periodicity: value })}
                   >
-                    <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-                    <p className="text-xs text-blue-900">
-                      Esta transação será automaticamente criada conforme a frequência escolhida.
-                    </p>
-                  </motion.div>
+                    <SelectTrigger className="h-12 rounded-xl bg-white border-slate-200 shadow-sm">
+                      <SelectValue placeholder="Frequência" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="daily">Diária</SelectItem>
+                      <SelectItem value="weekly">Semanal</SelectItem>
+                      <SelectItem value="monthly">Mensal</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
 
+          {/* O BOTÃO AGORA REAGE AO ESTADO 'type' CORRETAMENTE */}
           <Button
             type="submit"
-            className={`w-full h-12 rounded-xl font-semibold text-white transition-colors ${
+            style={{
+              backgroundColor: type === "income" ? "#10b981" : "#0f172a", // Emerald-500 ou Slate-900
+              color: "white"
+            }}
+            className={`w-full h-14 rounded-2xl font-bold shadow-lg transition-all active:scale-[0.98] ${
               type === "income" 
-                ? "bg-emerald-500 hover:bg-emerald-600" 
-                : "bg-slate-900 hover:bg-slate-800"
+                ? "shadow-emerald-500/20" 
+                : "shadow-slate-900/20"
             }`}
           >
-            {transaction ? "Salvar Alterações" : `Adicionar ${type === "income" ? "Receita" : "Despesa"}`}
+            {transaction ? "Guardar Alterações" : `Adicionar ${type === "income" ? "Receita" : "Despesa"}`}
           </Button>
         </form>
       </motion.div>

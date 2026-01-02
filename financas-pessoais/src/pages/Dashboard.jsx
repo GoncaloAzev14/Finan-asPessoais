@@ -70,7 +70,7 @@ export default function Dashboard() {
   const balance = totalIncome - totalExpense;
 
   const formatCurrency = (value) => 
-    `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+    `€ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 
   return (
     <div className="min-h-screen bg-slate-50">
