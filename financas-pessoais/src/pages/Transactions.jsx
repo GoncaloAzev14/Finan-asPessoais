@@ -119,7 +119,7 @@ export default function Transactions() {
               </div>
             </div>
 
-            {/* Listagem */}
+            {/* Lista */}
             <div className="space-y-3">
               {isLoading ? (
                 [1, 2, 3].map((i) => <div key={i} className="h-20 bg-white rounded-3xl animate-pulse border border-slate-100" />)
@@ -131,17 +131,26 @@ export default function Transactions() {
               ) : (
                 filteredTransactions.map((transaction, index) => (
                   <div key={transaction.id} className="group relative">
-                    <TransactionItem transaction={transaction} index={index} />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="transition-all duration-300 sm:group-hover:pr-24">
+                      <TransactionItem transaction={transaction} index={index} />
+                    </div>
+
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2 opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-all duration-200 z-10">
                       <button
-                        onClick={() => setEditingTransaction(transaction)}
-                        className="p-2 bg-slate-50 hover:bg-white text-slate-400 hover:text-slate-900 rounded-xl border border-transparent hover:border-slate-200 transition-all"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingTransaction(transaction);
+                        }}
+                        className="p-3 bg-white shadow-lg border border-slate-100 text-slate-400 hover:text-slate-900 rounded-2xl transition-all active:scale-90"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(transaction.id)}
-                        className="p-2 bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-xl border border-transparent hover:border-red-100 transition-all"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(transaction.id);
+                        }}
+                        className="p-3 bg-white shadow-lg border border-slate-100 text-slate-400 hover:text-red-600 rounded-2xl transition-all active:scale-90"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
