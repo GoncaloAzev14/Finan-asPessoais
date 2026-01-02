@@ -3,18 +3,19 @@ import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { firebaseDb as base44 } from "./../api/firestoreClient";
 import { motion, AnimatePresence } from "framer-motion";
-import { Wallet, Search, Filter, Trash2, Edit2 } from "lucide-react";
+import { Wallet, Search, Trash2, Edit2, List, BarChart3 } from "lucide-react";
 import TransactionItem from "./../components/finance/TransactionItem";
 import TransactionForm from "./../components/finance/TransactionForm";
-import { Button } from "./../components/ui/button";
+import ExpenseChart from "./../components/finance/ExpenseChart";
+import MonthlyChart from "./../components/finance/MonthlyChart";
 
 export default function Transactions() {
+  const [view, setView] = useState("list"); // 'list' ou 'chart'
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [editingTransaction, setEditingTransaction] = useState(null);
   const queryClient = useQueryClient();
 
-  // 1. Queries e Mutations
   const { data: transactions = [], isLoading } = useQuery({
     queryKey: ["transactions"],
     queryFn: () => base44.entities.Transaction.list("-date"),
@@ -22,9 +23,7 @@ export default function Transactions() {
 
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Transaction.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["transactions"] });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["transactions"] }),
   });
 
   const updateMutation = useMutation({
@@ -35,7 +34,6 @@ export default function Transactions() {
     },
   });
 
-  // 2. Lógica de Filtros
   const filteredTransactions = transactions.filter((t) => {
     const matchesSearch = t.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          t.category?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -50,73 +48,117 @@ export default function Transactions() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Histórico de Transações</h1>
-        
-        <div className="flex flex-col sm:flex-row gap-3">
-          {/* Barra de Pesquisa */}
-          <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Pesquisar..."
-              className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/5 w-full sm:w-64"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-
-          {/* Filtro de Tipo */}
-          <select
-            className="bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none"
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value)}
+    <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+      {/* Seletor de Vista (On/Off) */}
+      <div className="flex justify-center">
+        <div className="bg-slate-100 p-1 rounded-2xl flex gap-1 w-full max-w-75">
+          <button
+            onClick={() => setView("list")}
+            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-all ${
+              view === "list" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
+            }`}
           >
-            <option value="all">Todos</option>
-            <option value="income">Receitas</option>
-            <option value="expense">Despesas</option>
-          </select>
+            <List className="w-4 h-4" /> LISTA
+          </button>
+          <button
+            onClick={() => setView("chart")}
+            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-all ${
+              view === "chart" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
+            }`}
+          >
+            <BarChart3 className="w-4 h-4" /> GRÁFICO
+          </button>
         </div>
       </div>
 
-      {/* Lista de Transações */}
-      <div className="space-y-3">
-        {isLoading ? (
-          [1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-20 bg-white rounded-2xl animate-pulse border border-slate-100" />
-          ))
-        ) : filteredTransactions.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
-            <Wallet className="w-12 h-12 text-slate-200 mx-auto mb-3" />
-            <p className="text-slate-500">Nenhuma transação encontrada</p>
-          </div>
-        ) : (
-          filteredTransactions.map((transaction, index) => (
-            <div key={transaction.id} className="group relative">
-              <TransactionItem transaction={transaction} index={index} />
-              
-              {/* Botões de Ação que aparecem ao passar o rato (ou fixos em mobile) */}
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  onClick={() => setEditingTransaction(transaction)}
-                  className="p-2 bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 rounded-lg transition-colors"
+      <AnimatePresence mode="wait">
+        {view === "list" ? (
+          <motion.div
+            key="list-view"
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 10 }}
+            className="space-y-6"
+          >
+            {/* Cabeçalho e Filtros da Lista */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <h1 className="text-xl font-bold text-slate-900 tracking-tight">Histórico</h1>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="relative">
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Pesquisar..."
+                    className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none w-full sm:w-64"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <select
+                  className="bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none"
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
                 >
-                  <Edit2 className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => handleDelete(transaction.id)}
-                  className="p-2 bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 rounded-lg transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                  <option value="all">Todos</option>
+                  <option value="income">Receitas</option>
+                  <option value="expense">Despesas</option>
+                </select>
               </div>
             </div>
-          ))
-        )}
-      </div>
 
-      {/* Modal de Edição */}
+            {/* Listagem */}
+            <div className="space-y-3">
+              {isLoading ? (
+                [1, 2, 3].map((i) => <div key={i} className="h-20 bg-white rounded-3xl animate-pulse border border-slate-100" />)
+              ) : filteredTransactions.length === 0 ? (
+                <div className="text-center py-20 bg-white rounded-4xl border border-dashed border-slate-200">
+                  <Wallet className="w-12 h-12 text-slate-200 mx-auto mb-3" />
+                  <p className="text-slate-500 font-medium">Sem registos encontrados</p>
+                </div>
+              ) : (
+                filteredTransactions.map((transaction, index) => (
+                  <div key={transaction.id} className="group relative">
+                    <TransactionItem transaction={transaction} index={index} />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => setEditingTransaction(transaction)}
+                        className="p-2 bg-slate-50 hover:bg-white text-slate-400 hover:text-slate-900 rounded-xl border border-transparent hover:border-slate-200 transition-all"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(transaction.id)}
+                        className="p-2 bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-xl border border-transparent hover:border-red-100 transition-all"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="chart-view"
+            initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
+            className="space-y-6"
+          >
+            {/* Primeiro Gráfico: Distribuição/Despesas */}
+            <div className="bg-white rounded-4xl p-8 border border-slate-100 shadow-sm">
+              <h2 className="text-xl font-bold text-slate-900 mb-6 tracking-tight">Distribuição por Categoria</h2>
+              <ExpenseChart transactions={filteredTransactions} />
+            </div>
+
+            {/* Segundo Gráfico: Evolução Mensal */}
+            <div className="bg-white rounded-4xl p-8 border border-slate-100 shadow-sm">
+              <h2 className="text-xl font-bold text-slate-900 mb-6 tracking-tight">Evolução Mensal</h2>
+              <MonthlyChart transactions={filteredTransactions} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence>
         {editingTransaction && (
           <TransactionForm
