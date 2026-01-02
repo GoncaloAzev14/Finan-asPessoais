@@ -50,7 +50,6 @@ function App() {
 
         {/* Fallback to Dashboard */}
         <Route path="*" element={<Navigate to="/" replace />} />
-        <Route path="/categories" element={<CategorySettings />} />
       </Routes>
     </Router>
   );

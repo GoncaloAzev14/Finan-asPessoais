@@ -1,18 +1,19 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { createPageUrl } from "./../utils"; // Ajustado para o caminho relativo correto
 import { LayoutDashboard, ArrowLeftRight, Target, Wallet, Settings } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import CategoryForm from "./../components/finance/CategoryForm";
 
 const navItems = [
   { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
   { name: "Transações", icon: ArrowLeftRight, page: "Transactions" },
   { name: "Metas", icon: Target, page: "Goals" },
-  { name: "Categorias", icon: Settings, page: "Categories" }
 ];
 
 export default function Layout({ children, currentPageName }) {
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const location = useLocation();
 
   return (
@@ -46,6 +47,15 @@ export default function Layout({ children, currentPageName }) {
               </Link>
             );
           })}
+
+          {/* Botão de Categorias Desktop */}
+          <button
+            onClick={() => setIsCategoryModalOpen(true)}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-slate-600 hover:bg-slate-100 mt-auto"
+          >
+            <Settings className="w-5 h-5" />
+            <span className="font-medium">Categorias</span>
+          </button>
         </nav>
       </aside>
 
@@ -85,6 +95,15 @@ export default function Layout({ children, currentPageName }) {
               </Link>
             );
           })}
+
+          {/* Botão de Categorias Mobile */}
+          <button
+            onClick={() => setIsCategoryModalOpen(true)}
+            className="flex flex-col items-center gap-1 px-4 py-2"
+          >
+            <Settings className="w-5 h-5 text-slate-400" />
+            <span className="text-xs font-medium text-slate-400">Categorias</span>
+          </button>
         </div>
       </nav>
 
@@ -92,6 +111,13 @@ export default function Layout({ children, currentPageName }) {
       <main className="lg:pl-64 pt-16 lg:pt-0 pb-20 lg:pb-0">
         {children}
       </main>
+
+      {/* Modal de Categorias */}
+      <AnimatePresence>
+        {isCategoryModalOpen && (
+          <CategoryForm onClose={() => setIsCategoryModalOpen(false)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
