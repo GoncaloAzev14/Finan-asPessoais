@@ -35,7 +35,8 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
     amount: "",
     category: "",
     date: new Date().toISOString().split('T')[0],
-    isFixed: false
+    isFixed: false,       // The toggle state
+    periodicity: "monthly" // Default selection for the dropdown
   });
 
   const handleSubmit = (e) => {
@@ -44,7 +45,8 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
       ...formData,
       type,
       amount: parseFloat(formData.amount),
-      date: new Date(formData.date).toISOString()
+      date: new Date(formData.date).toISOString(),
+      periodicity: formData.isFixed ? formData.periodicity : "none"
     });
   };
 
@@ -72,7 +74,7 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
           </Button>
         </div>
 
-        {/* Seletor de Tipo */}
+        {/* Type Selector */}
         <div className="flex gap-2 p-1 bg-slate-100 rounded-xl">
           <button
             type="button"
@@ -160,8 +162,8 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
             />
           </div>
 
-          {/* CHECKBOX DE RECORRÊNCIA COM EXPLICAÇÃO */}
-          <div className="space-y-2">
+          {/* RECURRENCE SECTION */}
+          <div className="space-y-3">
             <div className="flex items-center space-x-3 p-4 bg-violet-50 rounded-xl border border-violet-100">
               <input 
                 type="checkbox" 
@@ -172,23 +174,48 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
               />
               <label htmlFor="isFixed" className="text-sm font-medium text-slate-700 flex items-center gap-2 cursor-pointer flex-1">
                 <Repeat className="w-4 h-4 text-violet-500" />
-                Transação Recorrente Mensal
+                Transação Recorrente
               </label>
             </div>
             
-            {formData.isFixed && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg border border-blue-100"
-              >
-                <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                <p className="text-xs text-blue-900">
-                  Esta transação será automaticamente criada todo mês. 
-                  Ideal para salário, aluguel, assinaturas, etc.
-                </p>
-              </motion.div>
-            )}
+            <AnimatePresence>
+              {formData.isFixed && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="space-y-3 overflow-hidden"
+                >
+                  <div className="space-y-2">
+                    <Label>Frequência da Recorrência</Label>
+                    <Select
+                      value={formData.periodicity}
+                      onValueChange={(value) => setFormData({ ...formData, periodicity: value })}
+                    >
+                      <SelectTrigger className="h-12 rounded-xl bg-white border-slate-200">
+                        <SelectValue placeholder="Selecione a frequência" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="daily">Diária</SelectItem>
+                        <SelectItem value="weekly">Semanal</SelectItem>
+                        <SelectItem value="monthly">Mensal</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg border border-blue-100"
+                  >
+                    <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-blue-900">
+                      Esta transação será automaticamente criada conforme a frequência escolhida.
+                    </p>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <Button
