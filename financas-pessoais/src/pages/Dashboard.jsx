@@ -185,6 +185,7 @@ export default function Dashboard() {
       <AnimatePresence>
         {showForm && (
           <TransactionForm
+            key="transaction-modal"
             onSubmit={(data) => createMutation.mutate(data)}
             onClose={() => setShowForm(false)}
           />

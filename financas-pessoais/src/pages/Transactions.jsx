@@ -150,7 +150,7 @@ export default function Transactions() {
           ) : (
             filteredTransactions.map((transaction, index) => (
               <div key={transaction.id} className="group relative">
-                <TransactionItem transaction={transaction} index={index} />
+                <TransactionItem key={transaction.id} transaction={transaction} index={index} />
                 <Button
                   variant="ghost"
                   size="icon"

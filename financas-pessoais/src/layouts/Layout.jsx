@@ -31,7 +31,7 @@ export default function Layout({ children, currentPageName }) {
         
         <nav className="flex-1 p-4 space-y-1">
           {navItems.map((item) => {
-            const isActive = currentPageName === item.page;
+            const isActive = location.pathname === createPageUrl(item.page);
             return (
               <Link
                 key={item.page}
@@ -75,7 +75,7 @@ export default function Layout({ children, currentPageName }) {
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 z-40 safe-area-inset-bottom">
         <div className="flex items-center justify-around h-16">
           {navItems.map((item) => {
-            const isActive = currentPageName === item.page;
+            const isActive = location.pathname === createPageUrl(item.page);
             return (
               <Link
                 key={item.page}
@@ -109,7 +109,17 @@ export default function Layout({ children, currentPageName }) {
 
       {/* Main Content */}
       <main className="lg:pl-64 pt-16 lg:pt-0 pb-20 lg:pb-0">
-        {children}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            {children}
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       {/* Modal de Categorias */}
