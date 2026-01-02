@@ -5,7 +5,7 @@ import { Button } from "./../ui/button";
 import { Input } from "./../ui/input";
 import { Label } from "./../ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./../ui/select";
-import { X, Plus, Minus, Repeat } from "lucide-react";
+import { X, Plus, Minus, Repeat, Info } from "lucide-react";
 
 const categories = {
   income: [
@@ -60,7 +60,7 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 100, opacity: 0 }}
-        className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-md p-6 space-y-6"
+        className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-md p-6 space-y-6 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between">
@@ -160,19 +160,35 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
             />
           </div>
 
-          {/* CHECKBOX DE RECORRÊNCIA */}
-          <div className="flex items-center space-x-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
-            <input 
-              type="checkbox" 
-              id="isFixed" 
-              checked={formData.isFixed}
-              onChange={(e) => setFormData({ ...formData, isFixed: e.target.checked })}
-              className="w-5 h-5 text-violet-600 rounded-md border-slate-300 focus:ring-violet-500"
-            />
-            <label htmlFor="isFixed" className="text-sm font-medium text-slate-700 flex items-center gap-2 cursor-pointer">
-              <Repeat className="w-4 h-4 text-slate-400" />
-              Repetir mensalmente (Despesa Fixa)
-            </label>
+          {/* CHECKBOX DE RECORRÊNCIA COM EXPLICAÇÃO */}
+          <div className="space-y-2">
+            <div className="flex items-center space-x-3 p-4 bg-violet-50 rounded-xl border border-violet-100">
+              <input 
+                type="checkbox" 
+                id="isFixed" 
+                checked={formData.isFixed}
+                onChange={(e) => setFormData({ ...formData, isFixed: e.target.checked })}
+                className="w-5 h-5 text-violet-600 rounded-md border-slate-300 focus:ring-violet-500"
+              />
+              <label htmlFor="isFixed" className="text-sm font-medium text-slate-700 flex items-center gap-2 cursor-pointer flex-1">
+                <Repeat className="w-4 h-4 text-violet-500" />
+                Transação Recorrente Mensal
+              </label>
+            </div>
+            
+            {formData.isFixed && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg border border-blue-100"
+              >
+                <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                <p className="text-xs text-blue-900">
+                  Esta transação será automaticamente criada todo mês. 
+                  Ideal para salário, aluguel, assinaturas, etc.
+                </p>
+              </motion.div>
+            )}
           </div>
 
           <Button

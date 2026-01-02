@@ -1,5 +1,5 @@
 import { firebaseDb } from "./api/firestoreClient";
-import { startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
+import { startOfMonth, endOfMonth, isWithinInterval, format } from "date-fns";
 
 export function createPageUrl(pageName) {
     const routes = {
@@ -19,29 +19,50 @@ export const checkAndGenerateRecurring = async (transactions) => {
   const today = new Date();
   const monthStart = startOfMonth(today);
   const monthEnd = endOfMonth(today);
+  const currentMonthKey = format(today, 'yyyy-MM'); // Ex: "2025-01"
 
-  // 1. Encontrar modelos de transações fixas
-  const fixedModels = transactions.filter(t => t.isFixed);
+  // 1. Encontrar modelos de transações fixas (os originais marcados como isFixed)
+  const fixedModels = transactions.filter(t => t.isFixed === true);
+
+  console.log(`🔍 Encontrados ${fixedModels.length} modelos de despesas fixas`);
 
   for (const model of fixedModels) {
-    // 2. Verificar se já existe uma cópia desta transação neste mês
+    // 2. Criar uma chave única para identificar a transação recorrente deste mês
+    const recurringKey = `${model.id}_${currentMonthKey}`;
+    
+    // 3. Verificar se já existe uma transação gerada para este modelo NESTE mês
     const alreadyExists = transactions.find(t => 
-      t.description === model.description && 
-      !t.isFixed && // As cópias geradas não são "modelos" isFixed para não duplicarem infinitamente
-      isWithinInterval(new Date(t.date), { start: monthStart, end: monthEnd })
+      t.recurringKey === recurringKey || // Verifica pela chave única
+      (
+        t.recurringSourceId === model.id && // OU verifica se veio deste modelo
+        t.isGenerated === true && 
+        isWithinInterval(new Date(t.date), { start: monthStart, end: monthEnd })
+      )
     );
 
-    if (!alreadyExists) {
-      // 3. Criar a transação para o mês atual
+    if (alreadyExists) {
+      console.log(`✅ Despesa fixa "${model.description}" já existe neste mês`);
+      continue; // Pula para o próximo modelo
+    }
+
+    // 4. Criar a transação para o mês atual
+    console.log(`➕ Gerando despesa fixa: "${model.description}" para ${currentMonthKey}`);
+    
+    try {
       await firebaseDb.entities.Transaction.create({
         description: model.description,
         amount: model.amount,
         type: model.type,
         category: model.category,
         date: today.toISOString(),
-        isFixed: false, // Esta é a instância paga do mês
-        isGenerated: true // Flag para saberes que foi o sistema que criou
+        isFixed: false,
+        isGenerated: true,
+        recurringSourceId: model.id,
+        recurringKey: recurringKey
       });
+      console.log(`✅ Despesa fixa "${model.description}" criada com sucesso!`);
+    } catch (error) {
+      console.error(`❌ Erro ao gerar despesa fixa "${model.description}":`, error);
     }
   }
 };
