@@ -1,18 +1,17 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { createPageUrl } from "./../utils"; // Ajustado para o caminho relativo correto
 import { LayoutDashboard, ArrowLeftRight, Target, Wallet, Settings } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CategoryForm from "./../components/finance/CategoryForm";
 
 const navItems = [
-  { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
-  { name: "Transações", icon: ArrowLeftRight, page: "Transactions" },
-  { name: "Metas", icon: Target, page: "Goals" },
+  { name: "Dashboard", icon: LayoutDashboard, path: "/" },
+  { name: "Transações", icon: ArrowLeftRight, path: "/transactions" },
+  { name: "Metas", icon: Target, path: "/goals" },
 ];
 
-export default function Layout({ children, currentPageName }) {
+export default function Layout({ children }) {
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const location = useLocation();
 
@@ -21,7 +20,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-100 flex-col z-40">
         <div className="p-6 border-b border-slate-100">
-          <Link to={createPageUrl("Dashboard")} className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-linear-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
               <Wallet className="w-5 h-5 text-white" />
             </div>
@@ -31,11 +30,11 @@ export default function Layout({ children, currentPageName }) {
         
         <nav className="flex-1 p-4 space-y-1">
           {navItems.map((item) => {
-            const isActive = location.pathname === createPageUrl(item.page);
+            const isActive = location.pathname === item.path;
             return (
               <Link
-                key={item.page}
-                to={createPageUrl(item.page)}
+                key={item.path}
+                to={item.path}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                   isActive
                     ? "bg-slate-900 text-white"
@@ -62,7 +61,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Mobile Header */}
       <header className="lg:hidden fixed top-0 left-0 right-0 bg-white border-b border-slate-100 z-40">
         <div className="flex items-center justify-center h-16 px-4">
-          <Link to={createPageUrl("Dashboard")} className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-linear-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
               <Wallet className="w-4 h-4 text-white" />
             </div>
@@ -72,24 +71,37 @@ export default function Layout({ children, currentPageName }) {
       </header>
 
       {/* Mobile Bottom Nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 z-40 safe-area-inset-bottom">
-        <div className="flex items-center justify-around h-16">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 z-40">
+        <div className="flex items-center justify-around h-16 relative">
           {navItems.map((item) => {
-            const isActive = location.pathname === createPageUrl(item.page);
+            const isActive = location.pathname === item.path;
             return (
               <Link
-                key={item.page}
-                to={createPageUrl(item.page)}
+                key={item.path}
+                to={item.path}
                 className="flex flex-col items-center gap-1 relative px-4 py-2"
               >
                 {isActive && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute -top-1 w-12 h-1 bg-slate-900 rounded-full"
+                    className="absolute -top-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-slate-900 rounded-full"
+                    transition={{
+                      type: "spring",
+                      stiffness: 500,
+                      damping: 30
+                    }}
                   />
                 )}
-                <item.icon className={`w-5 h-5 ${isActive ? "text-slate-900" : "text-slate-400"}`} />
-                <span className={`text-xs font-medium ${isActive ? "text-slate-900" : "text-slate-400"}`}>
+                <item.icon 
+                  className={`w-5 h-5 transition-colors ${
+                    isActive ? "text-slate-900" : "text-slate-400"
+                  }`} 
+                />
+                <span 
+                  className={`text-xs font-medium transition-colors ${
+                    isActive ? "text-slate-900" : "text-slate-400"
+                  }`}
+                >
                   {item.name}
                 </span>
               </Link>
@@ -109,17 +121,7 @@ export default function Layout({ children, currentPageName }) {
 
       {/* Main Content */}
       <main className="lg:pl-64 pt-16 lg:pt-0 pb-20 lg:pb-0">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={location.pathname}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-          >
-            {children}
-          </motion.div>
-        </AnimatePresence>
+        {children}
       </main>
 
       {/* Modal de Categorias */}

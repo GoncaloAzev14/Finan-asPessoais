@@ -60,7 +60,8 @@ export default function ExpenseChart({ transactions }) {
     >
       <h3 className="text-lg font-semibold text-slate-900 mb-4">Despesas por Categoria</h3>
       <div className="flex flex-col lg:flex-row items-center gap-6">
-        <div className="w-48 h-48">
+        {/* Chart Container com dimensões fixas */}
+        <div className="w-full lg:w-48 h-48 min-w-48 min-h-48">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -82,12 +83,14 @@ export default function ExpenseChart({ transactions }) {
             </PieChart>
           </ResponsiveContainer>
         </div>
+
+        {/* Legend */}
         <div className="flex-1 space-y-2 w-full">
           {data.slice(0, 5).map((item, index) => (
             <div key={item.name} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div
-                  className="w-3 h-3 rounded-full"
+                  className="w-3 h-3 rounded-full shrink-0"
                   style={{ backgroundColor: COLORS[index % COLORS.length] }}
                 />
                 <span className="text-sm text-slate-600">{item.name}</span>
