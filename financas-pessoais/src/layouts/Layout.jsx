@@ -15,110 +15,100 @@ export default function Layout({ children }) {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const location = useLocation();
 
-  // Encontra o nome da página atual com base no path
   const currentPage = navItems.find(item => item.path === location.pathname) || { name: "Finanças" };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row">
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-100 flex-col z-40">
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-          {/* Título da Aba Animado (Substitui o Logo) */}
-          <div className="relative h-8 flex items-center overflow-hidden">
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={location.pathname}
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: -20, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-                className="text-2xl font-bold text-slate-900 whitespace-now nowrap"
-              >
-                {currentPage.name}
-              </motion.span>
-            </AnimatePresence>
-          </div>
-
-          <button
-            onClick={() => setIsSettingsModalOpen(true)}
-            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all"
-          >
-            <Settings className="w-5 h-5" />
-          </button>
+        <div className="p-8">
+          <Link to="/" className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+              <Wallet className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-bold text-slate-900 tracking-tight">Finanças</span>
+          </Link>
+          
+          <nav className="space-y-1">
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                    isActive ? "bg-slate-900 text-white shadow-md shadow-slate-900/10" : "text-slate-500 hover:bg-slate-100"
+                  }`}
+                >
+                  <item.icon className="w-5 h-5" />
+                  <span className="font-semibold">{item.name}</span>
+                </Link>
+              );
+            })}
+          </nav>
         </div>
-        
-        <nav className="flex-1 p-4 space-y-1">
-          {navItems.map((item) => {
-            const isActive = location.pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                  isActive ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100"
-                }`}
-              >
-                <item.icon className="w-5 h-5" />
-                <span className="font-medium">{item.name}</span>
-              </Link>
-            );
-          })}
-        </nav>
       </aside>
 
-      {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 bg-white border-b border-slate-100 z-40">
-        <div className="flex items-center justify-between h-16 px-6">
-          {/* Título da Aba Animado Mobile */}
-          <div className="relative h-full flex items-center overflow-hidden">
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={location.pathname}
-                initial={{ x: -10, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: 10, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="text-lg font-bold text-slate-900"
-              >
-                {currentPage.name}
-              </motion.span>
-            </AnimatePresence>
-          </div>
+      {/* Main Area */}
+      <div className="flex-1 lg:pl-64 flex flex-col min-h-screen">
+        {/* Dynamic Header - Integrado no conteúdo */}
+        <header className="sticky top-0 z-30 bg-slate-50/80 backdrop-blur-md">
+          <div className="max-w-7xl mx-auto px-6 sm:px-8 h-20 sm:h-24 flex items-center justify-between">
+            <div className="overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.h1
+                  key={location.pathname}
+                  initial={{ y: 15, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -15, opacity: 0 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight"
+                >
+                  {currentPage.name}
+                </motion.h1>
+              </AnimatePresence>
+            </div>
 
-          <button
-            onClick={() => setIsSettingsModalOpen(true)}
-            className="p-2 text-slate-400 hover:text-slate-600 transition-colors"
-          >
-            <Settings className="w-5 h-5" />
-          </button>
-        </div>
-      </header>
+            <button
+              onClick={() => setIsSettingsModalOpen(true)}
+              className="p-3 bg-white border border-slate-200 text-slate-400 hover:text-slate-900 hover:border-slate-300 rounded-2xl transition-all shadow-sm hover:shadow-md active:scale-95"
+            >
+              <Settings className="w-6 h-6" />
+            </button>
+          </div>
+        </header>
+
+        {/* Content Area */}
+        <main className="flex-1 px-6 sm:px-8 pb-24 lg:pb-8 max-w-7xl mx-auto w-full">
+          {children}
+        </main>
+      </div>
 
       {/* Mobile Bottom Nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 z-40">
-        <div className="flex items-center justify-around h-16 relative">
+      <nav className="lg:hidden fixed bottom-6 left-6 right-6 h-16 bg-slate-900/95 backdrop-blur-lg rounded-2xl border border-white/10 shadow-2xl z-40 px-4">
+        <div className="flex items-center justify-around h-full relative">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <Link
                 key={item.path}
                 to={item.path}
-                className="flex flex-col items-center gap-1 relative px-4 py-2"
+                className="flex flex-col items-center justify-center gap-1 relative px-4"
               >
                 {isActive && (
                   <motion.div
-                    layoutId="activeTab"
-                    className="absolute -top-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-slate-900 rounded-full"
+                    layoutId="activeTabMobile"
+                    className="absolute -bottom-1 w-8 h-1 bg-emerald-400 rounded-full"
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
                   />
                 )}
                 <item.icon 
                   className={`w-5 h-5 transition-colors ${
-                    isActive ? "text-slate-900" : "text-slate-400"
+                    isActive ? "text-emerald-400" : "text-slate-400"
                   }`} 
                 />
-                <span className={`text-xs font-medium transition-colors ${
-                    isActive ? "text-slate-900" : "text-slate-400"
+                <span className={`text-[10px] font-bold uppercase tracking-wider transition-colors ${
+                    isActive ? "text-white" : "text-slate-500"
                   }`}
                 >
                   {item.name}
@@ -128,10 +118,6 @@ export default function Layout({ children }) {
           })}
         </div>
       </nav>
-
-      <main className="lg:pl-64 pt-16 lg:pt-0 pb-20 lg:pb-0">
-        {children}
-      </main>
 
       <AnimatePresence>
         {isSettingsModalOpen && (
