@@ -75,7 +75,7 @@ export default function Dashboard() {
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
-          <p className="text-slate-500 mt-1">Visão geral das suas finanças</p>
+          <p className="text-slate-500 mt-1"></p>
         </div>
         <Button
           onClick={() => setShowForm(true)}

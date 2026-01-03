@@ -6,16 +6,31 @@ import { motion, AnimatePresence } from "framer-motion";
 import CategoryForm from "./../components/finance/CategoryForm";
 
 const navItems = [
-  { name: "Dashboard", icon: LayoutDashboard, path: "/" },
-  { name: "Transações", icon: ArrowLeftRight, path: "/transactions" },
-  { name: "Metas", icon: Target, path: "/goals" },
+  {
+    name: "Dashboard",
+    icon: LayoutDashboard,
+    path: "/",
+    description: "Visão geral das tuas finanças"
+  },
+  {
+    name: "Transações",
+    icon: ArrowLeftRight,
+    path: "/transactions",
+    description: "Histórico completo de movimentos"
+  },
+  {
+    name: "Metas",
+    icon: Target,
+    path: "/goals",
+    description: "Define os teus objetivos"
+  },
 ];
 
 export default function Layout({ children }) {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const location = useLocation();
 
-  const currentPage = navItems.find(item => item.path === location.pathname) || { name: "Finanças" };
+  const currentPage = navItems.find(item => item.path === location.pathname) || { name: "Finanças", description: "Gestão pessoal" };
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row">
@@ -66,6 +81,9 @@ export default function Layout({ children }) {
                 >
                   {currentPage.name}
                 </motion.h1>
+                <p className="text-sm font-medium text-slate-500 mt-0.5">
+                  {currentPage.description}
+                </p>
               </AnimatePresence>
             </div>
 

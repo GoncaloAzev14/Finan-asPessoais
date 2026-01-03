@@ -55,107 +55,118 @@ function GoalForm({ goal, onSubmit, onClose }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4"
+      className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center"
       onClick={onClose}
     >
       <motion.div
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 100, opacity: 0 }}
-        className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-md p-6 space-y-6"
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+        className="bg-white rounded-t-[2.5rem] sm:rounded-3xl w-full max-w-lg p-8 pb-10 space-y-6 shadow-2xl overflow-y-auto max-h-[95vh] relative"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Handle visual para mobile */}
+        <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-2 sm:hidden" />
+
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-slate-900">
+          <h2 className="text-2xl font-black text-slate-900 tracking-tight">
             {goal ? "Editar Meta" : "Nova Meta"}
           </h2>
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <X className="w-5 h-5" />
+          <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full bg-slate-50 hover:bg-slate-100">
+            <X className="w-5 h-5 text-slate-500" />
           </Button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Nome da Meta */}
           <div className="space-y-2">
-            <Label>Nome da Meta</Label>
+            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Nome da Meta</Label>
             <Input
               placeholder="Ex: Viagem para Europa"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="h-12 rounded-xl"
+              className="h-16 rounded-2xl bg-slate-50 border-none px-6 text-slate-900 font-medium placeholder:text-slate-300 focus:ring-2 focus:ring-violet-500/5"
               required
             />
           </div>
 
-          <div className="space-y-2">
-            <Label>Ícone</Label>
-            <Select
-              value={formData.icon}
-              onValueChange={(value) => setFormData({ ...formData, icon: value })}
-            >
-              <SelectTrigger className="h-12 rounded-xl">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {iconOptions.map(({ value, label, Icon }) => (
-                  <SelectItem key={value} value={value}>
-                    <div className="flex items-center gap-2">
-                      <Icon className="w-4 h-4" />
-                      {label}
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Ícone */}
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Ícone</Label>
+              <Select
+                value={formData.icon}
+                onValueChange={(value) => setFormData({ ...formData, icon: value })}
+              >
+                <SelectTrigger className="h-16 rounded-2xl bg-slate-50 border-none px-6 font-bold text-slate-700">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-2xl border-slate-100">
+                  {iconOptions.map(({ value, label, Icon }) => (
+                    <SelectItem key={value} value={value} className="rounded-xl py-3">
+                      <div className="flex items-center gap-3 font-medium">
+                        <Icon className="w-4 h-4 text-violet-600" />
+                        {label}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div className="space-y-2">
-            <Label>Valor Alvo</Label>
-            <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">€</span>
+            {/* Data Limite */}
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Prazo (opcional)</Label>
               <Input
-                type="number"
-                step="0.01"
-                min="0"
-                placeholder="0,00"
-                value={formData.target_amount}
-                onChange={(e) => setFormData({ ...formData, target_amount: e.target.value })}
-                className="h-12 rounded-xl pl-12 text-lg font-semibold"
-                required
+                type="date"
+                value={formData.deadline}
+                onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
+                className="h-16 rounded-2xl bg-slate-50 border-none px-4 font-bold text-slate-700"
               />
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label>Valor Atual Economizado</Label>
-            <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">€</span>
-              <Input
-                type="number"
-                step="0.01"
-                min="0"
-                placeholder="0,00"
-                value={formData.current_amount}
-                onChange={(e) => setFormData({ ...formData, current_amount: e.target.value })}
-                className="h-12 rounded-xl pl-12"
-              />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Valor Alvo */}
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Objetivo Final</Label>
+              <div className="relative">
+                <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 font-black">€</span>
+                <Input
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={formData.target_amount}
+                  onChange={(e) => setFormData({ ...formData, target_amount: e.target.value })}
+                  className="h-16 rounded-2xl bg-slate-50 border-none pl-12 text-xl font-black text-slate-900"
+                  required
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label>Data Limite (opcional)</Label>
-            <Input
-              type="date"
-              value={formData.deadline}
-              onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
-              className="h-12 rounded-xl"
-            />
+            {/* Valor Atual */}
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Já tenho guardado</Label>
+              <div className="relative">
+                <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 font-black">€</span>
+                <Input
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={formData.current_amount}
+                  onChange={(e) => setFormData({ ...formData, current_amount: e.target.value })}
+                  className="h-16 rounded-2xl bg-slate-50 border-none pl-12 text-xl font-black text-violet-600"
+                />
+              </div>
+            </div>
           </div>
 
           <Button
             type="submit"
-            className="w-full h-12 rounded-xl font-semibold bg-violet-600 hover:bg-violet-700"
+            className="w-full h-18 rounded-4xl font-black text-white text-md shadow-2xl bg-violet-600 hover:bg-violet-700 shadow-violet-500/20 transition-all active:scale-95 mt-6 tracking-widest uppercase"
           >
-            {goal ? "Salvar Alterações" : "Criar Meta"}
+            {goal ? "Guardar Alterações" : "Criar Meta"}
           </Button>
         </form>
       </motion.div>
@@ -218,16 +229,11 @@ export default function Goals() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 px-2">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Metas</h1>
-          <p className="text-slate-500 text-sm mt-1 font-medium">Acompanhe os seus objetivos financeiros</p>
-        </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8 px-2">
         <Button
-          onClick={() => setShowForm(true)}
-          className="bg-violet-600 hover:bg-violet-700 rounded-2xl h-12 px-6 font-bold shadow-lg shadow-violet-500/20"
+          onClick={() => setShowForm(true)}className="w-full sm:w-auto bg-violet-600 hover:bg-violet-700 rounded-[2rem] h-14 px-8 font-black tracking-widest uppercase shadow-xl shadow-violet-500/20"
         >
-          <Plus className="w-4 h-4 mr-2" />
+          <Plus className="w-5 h-5 mr-2" />
           Nova Meta
         </Button>
       </div>
