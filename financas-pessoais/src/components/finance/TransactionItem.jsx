@@ -8,6 +8,7 @@ import {
   Zap, Heart, GraduationCap, Film, ShoppingBag, Plane, 
   MoreHorizontal, Pencil, Trash2 
 } from "lucide-react";
+
 import {
   Popover,
   PopoverContent,
@@ -57,8 +58,8 @@ export default function TransactionItem({ transaction, index, onEdit, onDelete }
   const handleTouchStart = () => {
     timerRef.current = setTimeout(() => {
       setIsOpen(true);
-      if (navigator.vibrate) navigator.vibrate(50); // Feedback tátil
-    }, 600); // Tempo para considerar long press
+      if (navigator.vibrate) navigator.vibrate(50);
+    }, 600);
   };
 
   const handleTouchEnd = () => {
@@ -72,34 +73,38 @@ export default function TransactionItem({ transaction, index, onEdit, onDelete }
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: index * 0.05 }}
-          // Eventos para Mobile (Touch) e Desktop (Mouse)
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
           onMouseDown={handleTouchStart}
           onMouseUp={handleTouchEnd}
           onMouseLeave={handleTouchEnd}
-          className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-100 active:bg-slate-50 transition-colors select-none cursor-pointer"
+          className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white rounded-xl border border-slate-100 active:bg-slate-50 transition-colors select-none cursor-pointer gap-3 sm:gap-0"
         >
-          <div className="flex items-center gap-4">
-            <div className={`p-3 rounded-xl ${
+          <div className="flex items-center gap-4 w-full">
+            <div className={`p-3 rounded-xl shrink-0 ${
               isIncome ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-600'
             }`}>
               <Icon className="w-5 h-5" />
             </div>
-            <div>
-              <p className="font-medium text-slate-900">{transaction.description}</p>
-              <p className="text-sm text-slate-500">
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-slate-900 wrap-break-word leading-tight">
+                {transaction.description}
+              </p>
+              <p className="text-sm text-slate-500 mt-0.5">
                 {categoryLabels[transaction.category]} • {format(new Date(transaction.date), "dd MMM", { locale: ptBR })}
               </p>
             </div>
           </div>
-          <p className={`font-semibold ${isIncome ? 'text-emerald-600' : 'text-slate-900'}`}>
+
+          <p className={`font-bold text-lg whitespace-nowrap self-end sm:self-auto ${
+            isIncome ? 'text-emerald-600' : 'text-slate-900'
+          }`}>
             {isIncome ? '+' : '-'} € {transaction.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
           </p>
         </motion.div>
       </PopoverTrigger>
 
-      <PopoverContent className="w-48 p-2 flex flex-col gap-1 shadow-xl border-slate-200">
+      <PopoverContent className="w-48 p-2 flex flex-col gap-1 shadow-xl border-slate-200 z-50 bg-white">
         <button
           onClick={() => {
             setIsOpen(false);
