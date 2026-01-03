@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./../ui/button";
 import { Input } from "./../ui/input";
 import { X, Plus, Trash2, Edit2, Check, LogOut, AlertTriangle, ChevronRight, Tag } from "lucide-react";
+import { toast } from "sonner";
 
 export default function CategoryForm({ onClose }) {
   const queryClient = useQueryClient();
@@ -44,15 +45,22 @@ export default function CategoryForm({ onClose }) {
   });
 
   const handleClearData = async () => {
-    if (window.confirm("ATENÇÃO: Isto eliminará permanentemente todos os seus dados. Deseja continuar?")) {
-      try {
-        await firebaseDb.clearAllUserData();
-        queryClient.invalidateQueries();
-        onClose();
-      } catch (error) {
-        console.error(error);
-      }
-    }
+    toast.error("Eliminar todos os dados?", {
+      description: "Isto apagará permanentemente todo o seu histórico.",
+      action: {
+        label: "Confirmar",
+        onClick: async () => {
+          try {
+            await firebaseDb.clearAllUserData();
+            queryClient.invalidateQueries();
+            toast.success("Todos os dados foram eliminados.");
+            onClose();
+          } catch (error) {
+            toast.error("Erro ao eliminar dados.");
+          }
+        },
+      },
+    });
   };
 
   const filteredCategories = categories.filter(c => c.type === type);

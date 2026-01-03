@@ -8,6 +8,7 @@ import TransactionItem from "./../components/finance/TransactionItem";
 import TransactionForm from "./../components/finance/TransactionForm";
 import ExpenseChart from "./../components/finance/ExpenseChart";
 import MonthlyChart from "./../components/finance/MonthlyChart";
+import { toast } from "sonner";
 
 export default function Transactions() {
   const [view, setView] = useState("list"); // 'list' ou 'chart'
@@ -31,6 +32,7 @@ export default function Transactions() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       setEditingTransaction(null);
+      toast.success("Transação atualizada com sucesso!");
     },
   });
 
@@ -42,9 +44,13 @@ export default function Transactions() {
   });
 
   const handleDelete = (id) => {
-    if (window.confirm("Tens a certeza que queres eliminar esta transação?")) {
-      deleteMutation.mutate(id);
-    }
+    toast.warning("Tem a certeza que deseja eliminar?", {
+      description: "Esta ação é irreversível.",
+      action: {
+        label: "Eliminar",
+        onClick: () => deleteMutation.mutate(id),
+      },
+    });
   };
 
   return (

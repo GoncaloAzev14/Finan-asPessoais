@@ -6,6 +6,7 @@ import Goals from './pages/Goals';
 import { useAuth } from "./contexts/AuthContext";
 import Login from './pages/Login';
 import CategorySettings from "./pages/CategorySettings";
+import { Toaster } from 'sonner';
 
 function App() {
   const { user, loading } = useAuth();
@@ -31,16 +32,19 @@ function App() {
   }
 
   return (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/transactions" element={<Transactions />} />
-        <Route path="/goals" element={<Goals />} />
-        <Route path="/categories" element={<CategorySettings />} />
-        <Route path="/login" element={<Navigate to="/" replace />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Layout>
+    <>
+      <Toaster position="top-right" richColors closeButton />
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/transactions" element={<Transactions />} />
+          <Route path="/goals" element={<Goals />} />
+          <Route path="/categories" element={<CategorySettings />} />
+          <Route path="/login" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Layout>
+    </>
   );
 }
 

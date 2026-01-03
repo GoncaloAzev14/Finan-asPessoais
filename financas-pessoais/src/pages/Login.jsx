@@ -6,6 +6,7 @@ import { Wallet, Mail, Lock, ArrowRight, Chrome, Loader2 } from "lucide-react"; 
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { toast } from "sonner";
 
 export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -44,18 +45,19 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setError("");
-
     try {
       if (isLogin) {
         await login(email, password);
+        toast.success("Bem-vindo de volta!");
       } else {
         await register(email, password);
+        toast.success("Conta criada com sucesso!");
       }
       navigate("/");
     } catch (err) {
-      setError("Falha na autenticação. Verifique os seus dados.");
-      console.error(err);
+      toast.error("Falha na autenticação", {
+        description: "Verifique as suas credenciais e tente novamente."
+      });
     } finally {
       setIsSubmitting(false);
     }
