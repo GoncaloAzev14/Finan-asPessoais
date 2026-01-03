@@ -3,19 +3,27 @@ import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { firebaseDb } from "./../../api/firestoreClient";
 import { useAuth } from "./../../contexts/AuthContext";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button } from "./../ui/button";
 import { Input } from "./../ui/input";
-import { X, Plus, Trash2, Edit2, Check, LogOut, AlertTriangle, ChevronRight, Tag } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"; // Importar Popover
+import { X, Plus, Trash2, LogOut, AlertTriangle, ChevronRight, Smile } from "lucide-react";
 import { toast } from "sonner";
+
+// Lista de Emojis Sugeridos
+const EMOJI_LIST = [
+  "💰", "💸", "🏠", "🛒", "🚗", "⛽", "💊", "🎓",
+  "✈️", "🍔", "🎮", "🎁", "💼", "📈", "🐾", "👶",
+  "🔧", "💡", "📱", "💻", "👠", "🍺", "🏋️", "🎨"
+];
 
 export default function CategoryForm({ onClose }) {
   const queryClient = useQueryClient();
   const { logout } = useAuth();
   const [newCategory, setNewCategory] = useState("");
   const [type, setType] = useState("expense");
-  const [editingId, setEditingId] = useState(null);
-  const [editValue, setEditValue] = useState("");
+  const [selectedIcon, setSelectedIcon] = useState("🏷️"); // Estado para o ícone
+  const [isEmojiOpen, setIsEmojiOpen] = useState(false);
 
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
@@ -27,21 +35,13 @@ export default function CategoryForm({ onClose }) {
     onSuccess: () => {
       queryClient.invalidateQueries(["categories"]);
       setNewCategory("");
+      setSelectedIcon("🏷️"); // Reset do ícone
     }
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id) => firebaseDb.entities.Category.delete(id),
     onSuccess: () => queryClient.invalidateQueries(["categories"])
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: ({ id, label }) => 
-      firebaseDb.entities.Category.update(id, { label, value: label.toLowerCase() }),
-    onSuccess: () => {
-      queryClient.invalidateQueries(["categories"]);
-      setEditingId(null);
-    }
   });
 
   const handleClearData = async () => {
@@ -63,6 +63,18 @@ export default function CategoryForm({ onClose }) {
     });
   };
 
+  const handleAddCategory = (e) => {
+    e.preventDefault();
+    if(newCategory) {
+      createMutation.mutate({
+        label: newCategory,
+        value: newCategory.toLowerCase(),
+        type,
+        icon: selectedIcon // Envia o emoji
+      });
+    }
+  };
+
   const filteredCategories = categories.filter(c => c.type === type);
 
   return (
@@ -76,7 +88,7 @@ export default function CategoryForm({ onClose }) {
         className="bg-white rounded-t-[2.5rem] sm:rounded-4xl w-full max-w-md flex flex-col max-h-[90vh] shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header - Mais limpo */}
+        {/* Header */}
         <div className="px-8 pt-8 pb-4 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Definições</h2>
           <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400">
@@ -86,7 +98,7 @@ export default function CategoryForm({ onClose }) {
 
         <div className="flex-1 overflow-y-auto px-8 pb-8 space-y-8">
           
-          {/* SECÇÃO: CATEGORIAS - Layout em "Card Único" com divisores */}
+          {/* SECÇÃO: CATEGORIAS */}
           <section className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-widest">Categorias</h3>
@@ -98,14 +110,39 @@ export default function CategoryForm({ onClose }) {
 
             <div className="bg-slate-50 rounded-3xl border border-slate-100 overflow-hidden">
               <div className="p-4 border-b border-slate-200/60 bg-white/50">
-                <form onSubmit={(e) => { e.preventDefault(); if(newCategory) createMutation.mutate({ label: newCategory, value: newCategory.toLowerCase(), type }); }} className="flex gap-2">
+                <form onSubmit={handleAddCategory} className="flex gap-2">
+                  {/* Seletor de Emoji */}
+                  <Popover open={isEmojiOpen} onOpenChange={setIsEmojiOpen}>
+                    <PopoverTrigger asChild>
+                      <button type="button" className="w-10 h-10 flex items-center justify-center text-xl bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+                        {selectedIcon}
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-64 p-2" align="start">
+                      <div className="grid grid-cols-6 gap-1">
+                        {EMOJI_LIST.map(emoji => (
+                          <button
+                            key={emoji}
+                            type="button"
+                            onClick={() => { setSelectedIcon(emoji); setIsEmojiOpen(false); }}
+                            className="p-2 hover:bg-slate-100 rounded-lg text-lg transition-colors"
+                          >
+                            {emoji}
+                          </button>
+                        ))}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+
                   <Input 
-                    placeholder="Adicionar nova..." 
+                    placeholder="Nome da categoria..." 
                     value={newCategory} 
                     onChange={(e) => setNewCategory(e.target.value)}
-                    className="border-none bg-transparent focus-visible:ring-0 h-10 px-0 placeholder:text-slate-400"
+                    className="border-none bg-transparent focus-visible:ring-0 h-10 px-0 placeholder:text-slate-400 flex-1"
                   />
-                  <Button type="submit" size="sm" className="rounded-xl shadow-none hover:bg-slate-800"><Plus className="w-4 h-4" /></Button>
+                  <Button type="submit" size="sm" className="rounded-xl shadow-none bg-slate-900 hover:bg-slate-800">
+                    <Plus className="w-4 h-4" />
+                  </Button>
                 </form>
               </div>
 
@@ -113,8 +150,9 @@ export default function CategoryForm({ onClose }) {
                 {filteredCategories.map((cat) => (
                   <div key={cat.id} className="flex items-center justify-between p-4 group transition-colors hover:bg-white">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-slate-200/50 flex items-center justify-center">
-                        <Tag className="w-4 h-4 text-slate-500" />
+                      {/* Exibe o emoji da categoria ou um fallback */}
+                      <div className="w-8 h-8 rounded-lg bg-slate-200/50 flex items-center justify-center text-lg">
+                        {cat.icon || "🏷️"}
                       </div>
                       <span className="text-slate-700 font-medium">{cat.label}</span>
                     </div>
@@ -138,7 +176,7 @@ export default function CategoryForm({ onClose }) {
             </div>
           </section>
 
-          {/* SECÇÃO: CONTA - Estilo Lista de Sistema */}
+          {/* SECÇÃO: CONTA */}
           <section className="space-y-4">
             <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-widest">Conta e Privacidade</h3>
             <div className="bg-slate-50 rounded-3xl border border-slate-100 overflow-hidden divide-y divide-slate-200/60">

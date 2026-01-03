@@ -11,22 +11,22 @@ import { X, Plus, Minus, Repeat } from "lucide-react";
 
 const defaultCategories = {
   income: [
-    { value: "salary", label: "Salário" },
-    { value: "freelance", label: "Freelance" },
-    { value: "investments", label: "Investimentos" },
-    { value: "other", label: "Outros" }
+    { value: "salary", label: "Salário", icon: "💰" },
+    { value: "freelance", label: "Freelance", icon: "💻" },
+    { value: "investments", label: "Investimentos", icon: "📈" },
+    { value: "other", label: "Outros", icon: "🔹" }
   ],
   expense: [
-    { value: "food", label: "Alimentação" },
-    { value: "transport", label: "Transporte" },
-    { value: "housing", label: "Moradia" },
-    { value: "utilities", label: "Contas" },
-    { value: "health", label: "Saúde" },
-    { value: "education", label: "Educação" },
-    { value: "entertainment", label: "Lazer" },
-    { value: "shopping", label: "Compras" },
-    { value: "travel", label: "Viagem" },
-    { value: "other", label: "Outros" }
+    { value: "food", label: "Alimentação", icon: "🍔" },
+    { value: "transport", label: "Transporte", icon: "🚗" },
+    { value: "housing", label: "Moradia", icon: "🏠" },
+    { value: "utilities", label: "Contas", icon: "💡" },
+    { value: "health", label: "Saúde", icon: "💊" },
+    { value: "education", label: "Educação", icon: "🎓" },
+    { value: "entertainment", label: "Lazer", icon: "🎬" },
+    { value: "shopping", label: "Compras", icon: "🛍️" },
+    { value: "travel", label: "Viagem", icon: "✈️" },
+    { value: "other", label: "Outros", icon: "🔹" }
   ]
 };
 
@@ -36,18 +36,16 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
   useEffect(() => {
     const originalStyle = window.getComputedStyle(document.body).overflow;
     document.body.style.overflow = 'hidden';
-    
-    return () => {
-      document.body.style.overflow = originalStyle;
-    };
+    return () => { document.body.style.overflow = originalStyle; };
   }, []);
-  
+
   const { data: dbCategories = [] } = useQuery({
     queryKey: ["categories"],
     queryFn: () => firebaseDb.entities.Category.list()
   });
 
   const currentCategories = dbCategories.filter(c => c.type === type);
+
   const finalCategories = currentCategories.length > 0 
     ? currentCategories 
     : defaultCategories[type];
@@ -68,14 +66,19 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const selectedCategoryObj = finalCategories.find(c => c.value === formData.category) || {};
+    const iconToSave = selectedCategoryObj.icon || "🏷️";
     onSubmit({
       ...formData,
       type,
       amount: parseFloat(formData.amount),
       date: new Date(formData.date).toISOString(),
-      periodicity: formData.isFixed ? formData.periodicity : "none"
+      periodicity: formData.isFixed ? formData.periodicity : "none",
+      icon: iconToSave
     });
   };
+
+  const selectedCategoryDisplay = finalCategories.find(c => c.value === formData.category);
 
   return (
     <motion.div
@@ -93,7 +96,6 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
         className="bg-white rounded-t-[2.5rem] sm:rounded-3xl w-full max-w-lg p-8 pb-10 space-y-6 shadow-2xl overflow-y-auto max-h-[95vh] relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Handle visual para mobile */}
         <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-2 sm:hidden" />
 
         <div className="flex items-center justify-between">
@@ -105,15 +107,12 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
           </Button>
         </div>
 
-        {/* Seletor de Tipo Premium */}
         <div className="flex gap-2 p-1.5 bg-slate-100 rounded-2xl">
           <button
             type="button"
             onClick={() => handleTypeChange("expense")}
             className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-xs tracking-widest transition-all ${
-              type === "expense" 
-                ? "bg-white text-slate-900 shadow-md" 
-                : "text-slate-400 hover:text-slate-600"
+              type === "expense" ? "bg-white text-slate-900 shadow-md" : "text-slate-400 hover:text-slate-600"
             }`}
           >
             <Minus className="w-4 h-4" /> DESPESA
@@ -122,9 +121,7 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
             type="button"
             onClick={() => handleTypeChange("income")}
             className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-xs tracking-widest transition-all ${
-              type === "income" 
-                ? "bg-white text-emerald-600 shadow-md" 
-                : "text-slate-400 hover:text-slate-600"
+              type === "income" ? "bg-white text-emerald-600 shadow-md" : "text-slate-400 hover:text-slate-600"
             }`}
           >
             <Plus className="w-4 h-4" /> RECEITA
@@ -166,11 +163,7 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
                 type="date"
                 value={formData.date}
                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                className="h-16 rounded-2xl bg-slate-50 border-none px-4 font-bold text-slate-700 [&::-webkit-date-and-time-value]:text-left"
-                style={{
-                  WebkitAppearance: 'none',
-                  MozAppearance: 'textfield'
-                }}
+                className="h-16 rounded-2xl bg-slate-50 border-none px-4 font-bold text-slate-700"
                 required
               />
             </div>
@@ -184,19 +177,28 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
               required
             >
               <SelectTrigger className="h-16 rounded-2xl bg-slate-50 border-none px-6 font-bold text-slate-700">
-                <SelectValue placeholder="Escolher categoria" />
+                {selectedCategoryDisplay ? (
+                  <span className="flex items-center gap-3">
+                    <span className="text-xl">{selectedCategoryDisplay.icon || "🏷️"}</span>
+                    <span>{selectedCategoryDisplay.label}</span>
+                  </span>
+                ) : (
+                  <span className="text-slate-400 font-normal">Escolher categoria</span>
+                )}
               </SelectTrigger>
-              <SelectContent className="rounded-2xl border-slate-100 shadow-xl">
+              <SelectContent className="rounded-2xl border-slate-100 shadow-xl max-h-60">
                 {finalCategories.map((cat) => (
-                  <SelectItem key={cat.id || cat.value} value={cat.value} className="rounded-xl py-3 font-medium">
-                    {cat.label}
+                  <SelectItem key={cat.id || cat.value} value={cat.value} className="rounded-xl py-3 font-medium cursor-pointer">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xl">{cat.icon || "🏷️"}</span>
+                      {cat.label}
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
 
-          {/* Recorrência com Estilo Card */}
           <div
             onClick={() => setFormData({ ...formData, isFixed: !formData.isFixed })}
             className={`flex items-center gap-4 p-5 rounded-3xl border-2 transition-all cursor-pointer ${

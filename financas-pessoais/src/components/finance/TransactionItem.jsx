@@ -51,10 +51,14 @@ export default function TransactionItem({ transaction, index, onEdit, onDelete }
   const [isOpen, setIsOpen] = useState(false);
   const timerRef = useRef(null);
 
-  const Icon = categoryIcons[transaction.category] || MoreHorizontal;
   const isIncome = transaction.type === "income";
 
-  // Lógica de Long Press
+  const hasCustomIcon = transaction.icon;
+  const FallbackIcon = categoryIcons[transaction.category] || MoreHorizontal;
+
+  const categoryLabel = categoryLabels[transaction.category] ||
+                        (transaction.category ? transaction.category.charAt(0).toUpperCase() + transaction.category.slice(1) : "Geral");
+
   const handleTouchStart = () => {
     timerRef.current = setTimeout(() => {
       setIsOpen(true);
@@ -66,23 +70,13 @@ export default function TransactionItem({ transaction, index, onEdit, onDelete }
     if (timerRef.current) clearTimeout(timerRef.current);
   };
 
-  // Handlers separados para garantir execução no mobile
-  const handleEdit = (e) => {
+  const handleAction = (e, action) => {
     e.preventDefault();
     e.stopPropagation();
     setIsOpen(false);
-    if (onEdit) {
-      onEdit(transaction);
-    }
-  };
-
-  const handleDelete = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsOpen(false);
-    if (onDelete) {
-      onDelete(transaction.id);
-    }
+    setTimeout(() => {
+        action();
+    }, 0);
   };
 
   return (
@@ -100,17 +94,25 @@ export default function TransactionItem({ transaction, index, onEdit, onDelete }
           className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white rounded-xl border border-slate-100 active:bg-slate-50 transition-colors select-none cursor-pointer gap-3 sm:gap-0"
         >
           <div className="flex items-center gap-4 w-full">
-            <div className={`p-3 rounded-xl shrink-0 ${
-              isIncome ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-600'
+            {/* Renderização do Ícone */}
+            <div className={`w-12 h-12 flex items-center justify-center rounded-xl shrink-0 text-xl border ${
+              isIncome 
+                ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
+                : 'bg-slate-50 text-slate-600 border-slate-100'
             }`}>
-              <Icon className="w-5 h-5" />
+              {hasCustomIcon ? (
+                <span>{transaction.icon}</span>
+              ) : (
+                <FallbackIcon className="w-5 h-5" />
+              )}
             </div>
+            
             <div className="flex-1 min-w-0">
               <p className="font-medium text-slate-900 wrap-break-word leading-tight">
                 {transaction.description}
               </p>
               <p className="text-sm text-slate-500 mt-0.5">
-                {categoryLabels[transaction.category]} • {format(new Date(transaction.date), "dd MMM", { locale: ptBR })}
+                {categoryLabel} • {format(new Date(transaction.date), "dd MMM", { locale: ptBR })}
               </p>
             </div>
           </div>
@@ -124,20 +126,22 @@ export default function TransactionItem({ transaction, index, onEdit, onDelete }
       </PopoverTrigger>
 
       <PopoverContent className="w-48 p-2 flex flex-col gap-1 shadow-xl border-slate-200 z-50 bg-white">
-        <button
-          onClick={handleEdit}
-          className="flex items-center gap-2 w-full p-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
+        <div
+          onClick={(e) => handleAction(e, () => onEdit(transaction))}
+          onTouchEnd={(e) => handleAction(e, () => onEdit(transaction))}
+          className="flex items-center gap-2 w-full p-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
         >
           <Pencil className="w-4 h-4" />
           Editar item
-        </button>
-        <button
-          onClick={handleDelete}
-          className="flex items-center gap-2 w-full p-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+        </div>
+        <div
+          onClick={(e) => handleAction(e, () => onDelete(transaction.id))}
+          onTouchEnd={(e) => handleAction(e, () => onDelete(transaction.id))}
+          className="flex items-center gap-2 w-full p-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
         >
           <Trash2 className="w-4 h-4" />
           Eliminar
-        </button>
+        </div>
       </PopoverContent>
     </Popover>
   );

@@ -3,14 +3,23 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { firebaseDb } from "../api/firestoreClient";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Plus, Trash2, Edit2, X, Check } from "lucide-react";
+
+const EMOJI_LIST = [
+  "💰", "💸", "🏠", "🛒", "🚗", "⛽", "💊", "🎓", 
+  "✈️", "🍔", "🎮", "🎁", "💼", "📈", "🐾", "👶", 
+  "🔧", "💡", "📱", "💻", "👠", "🍺", "🏋️", "🎨"
+];
 
 export default function CategorySettings() {
   const queryClient = useQueryClient();
   const [newCategory, setNewCategory] = useState("");
   const [type, setType] = useState("expense");
+  const [selectedIcon, setSelectedIcon] = useState("🏷️");
   const [editingId, setEditingId] = useState(null);
   const [editValue, setEditValue] = useState("");
+  const [isEmojiOpen, setIsEmojiOpen] = useState(false);
 
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
@@ -22,6 +31,7 @@ export default function CategorySettings() {
     onSuccess: () => {
       queryClient.invalidateQueries(["categories"]);
       setNewCategory("");
+      setSelectedIcon("🏷️");
     }
   });
 
@@ -41,7 +51,12 @@ export default function CategorySettings() {
   const handleAdd = (e) => {
     e.preventDefault();
     if (!newCategory) return;
-    createMutation.mutate({ label: newCategory, value: newCategory.toLowerCase(), type });
+    createMutation.mutate({ 
+      label: newCategory, 
+      value: newCategory.toLowerCase(), 
+      type,
+      icon: selectedIcon 
+    });
   };
 
   const filteredCategories = categories.filter(c => c.type === type);
@@ -54,15 +69,39 @@ export default function CategorySettings() {
       </div>
 
       <div className="flex gap-2 p-1 bg-slate-100 rounded-xl">
-        <button onClick={() => setType("expense")} className={`flex-1 py-2 rounded-lg ${type === "expense" ? "bg-white shadow" : ""}`}>Despesas</button>
-        <button onClick={() => setType("income")} className={`flex-1 py-2 rounded-lg ${type === "income" ? "bg-white shadow" : ""}`}>Receitas</button>
+        <button onClick={() => setType("expense")} className={`flex-1 py-2 rounded-lg font-bold text-sm transition-all ${type === "expense" ? "bg-white shadow text-slate-900" : "text-slate-500"}`}>Despesas</button>
+        <button onClick={() => setType("income")} className={`flex-1 py-2 rounded-lg font-bold text-sm transition-all ${type === "income" ? "bg-white shadow text-emerald-600" : "text-slate-500"}`}>Receitas</button>
       </div>
 
       <form onSubmit={handleAdd} className="flex gap-2">
+        {/* Seletor Emoji */}
+        <Popover open={isEmojiOpen} onOpenChange={setIsEmojiOpen}>
+          <PopoverTrigger asChild>
+            <button type="button" className="w-10 h-10 flex items-center justify-center text-xl bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors shrink-0">
+              {selectedIcon}
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-64 p-2" align="start">
+            <div className="grid grid-cols-6 gap-1">
+              {EMOJI_LIST.map(emoji => (
+                <button
+                  key={emoji}
+                  type="button"
+                  onClick={() => { setSelectedIcon(emoji); setIsEmojiOpen(false); }}
+                  className="p-2 hover:bg-slate-100 rounded-lg text-lg transition-colors"
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
+
         <Input 
           placeholder="Nome da nova categoria..." 
           value={newCategory} 
           onChange={(e) => setNewCategory(e.target.value)} 
+          className="bg-white"
         />
         <Button type="submit"><Plus className="w-4 h-4 mr-2" /> Adicionar</Button>
       </form>
@@ -77,13 +116,18 @@ export default function CategorySettings() {
                 <Button size="icon" variant="ghost" onClick={() => setEditingId(null)}><X className="w-4 h-4" /></Button>
               </div>
             ) : (
-              <>
-                <span className="font-medium">{cat.label}</span>
+              <div className="flex items-center gap-3 w-full">
+                {/* Ícone */}
+                <div className="w-8 h-8 flex items-center justify-center text-lg bg-slate-50 rounded-lg border border-slate-100">
+                  {cat.icon || "🏷️"}
+                </div>
+                <span className="font-medium flex-1">{cat.label}</span>
+                
                 <div className="flex gap-1">
                   <Button size="icon" variant="ghost" onClick={() => { setEditingId(cat.id); setEditValue(cat.label); }}><Edit2 className="w-4 h-4 text-slate-400" /></Button>
                   <Button size="icon" variant="ghost" onClick={() => deleteMutation.mutate(cat.id)}><Trash2 className="w-4 h-4 text-red-400" /></Button>
                 </div>
-              </>
+              </div>
             )}
           </div>
         ))}
