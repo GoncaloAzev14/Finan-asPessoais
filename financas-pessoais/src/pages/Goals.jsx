@@ -8,20 +8,11 @@ import { Input } from "./../components/ui/input";
 import { Label } from "./../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./../components/ui/select";
 import { Progress } from "./../components/ui/progress";
-import { Plus, X, Target, Plane, Home, Car, GraduationCap, Sparkles, Pencil, Trash2 } from "lucide-react";
+import { Plus, X, Target, Plane, Home, Car, GraduationCap, Sparkles } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "./../components/ui/alert-dialog";
+import GoalCard from "./../components/finance/GoalCard";
 
 const icons = {
   target: Target,
@@ -175,7 +166,6 @@ function GoalForm({ goal, onSubmit, onClose }) {
 export default function Goals() {
   const [showForm, setShowForm] = useState(false);
   const [editingGoal, setEditingGoal] = useState(null);
-  const [deleteId, setDeleteId] = useState(null);
   const queryClient = useQueryClient();
 
   const { data: goals = [], isLoading } = useQuery({
@@ -207,7 +197,6 @@ export default function Goals() {
     mutationFn: (id) => base44.entities.Goal.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["goals"] });
-      setDeleteId(null);
       toast.success("Meta eliminada.");
     },
     onError: () => toast.error("Erro ao eliminar meta.")
@@ -293,80 +282,15 @@ export default function Goals() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {goals.map((goal, index) => {
-            const Icon = icons[goal.icon] || icons.default;
-            const progress = goal.target_amount > 0 
-              ? Math.min(((goal.current_amount || 0) / goal.target_amount) * 100, 100)
-              : 0;
-
-            return (
-              <motion.div
-                key={goal.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.05 }}
-                className="bg-white rounded-4xl p-6 border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all group relative overflow-hidden"
-              >
-                <div className="flex items-start justify-between mb-5">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-violet-600 group-hover:bg-violet-600 group-hover:text-white transition-colors">
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-slate-900 group-hover:text-violet-600 transition-colors">{goal.name}</h4>
-                      {goal.deadline && (
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
-                          até {format(new Date(goal.deadline), "dd MMM yyyy", { locale: ptBR })}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  
-                  {/* Botões de Ação Melhorados */}
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-all z-20">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setEditingGoal(goal);
-                      }}
-                      className="p-2 bg-slate-50 hover:bg-blue-50 text-slate-400 hover:text-blue-600 rounded-xl transition-colors"
-                    >
-                      <Pencil className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteRequest(goal.id);
-                      }}
-                      className="p-2 bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-xl transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <Progress value={progress} className="h-2.5 rounded-full bg-slate-100" />
-                  
-                  <div className="flex items-end justify-between">
-                    <div className="space-y-0.5">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase">Poupança</p>
-                      <p className="font-bold text-slate-900">€ {(goal.current_amount || 0).toLocaleString('pt-PT')}</p>
-                    </div>
-                    <div className="text-center">
-                       <p className="text-xs font-black text-violet-600 bg-violet-50 px-2 py-1 rounded-lg">
-                        {progress.toFixed(0)}%
-                       </p>
-                    </div>
-                    <div className="text-right space-y-0.5">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase">Alvo</p>
-                      <p className="font-bold text-slate-900">€ {goal.target_amount.toLocaleString('pt-PT')}</p>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
+          {goals.map((goal, index) => (
+            <GoalCard
+              key={goal.id}
+              goal={goal}
+              index={index}
+              onEdit={setEditingGoal}
+              onDelete={handleDeleteRequest}
+            />
+          ))}
         </div>
       )}
 

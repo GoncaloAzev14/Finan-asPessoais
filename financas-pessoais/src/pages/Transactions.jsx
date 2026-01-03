@@ -136,32 +136,13 @@ export default function Transactions() {
                 </div>
               ) : (
                 filteredTransactions.map((transaction, index) => (
-                  <div key={transaction.id} className="group relative">
-                    <div className="transition-all duration-300 sm:group-hover:pr-24">
-                      <TransactionItem transaction={transaction} index={index} />
-                    </div>
-
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2 opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-all duration-200 z-10">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingTransaction(transaction);
-                        }}
-                        className="p-3 bg-white shadow-lg border border-slate-100 text-slate-400 hover:text-slate-900 rounded-2xl transition-all active:scale-90"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(transaction.id);
-                        }}
-                        className="p-3 bg-white shadow-lg border border-slate-100 text-slate-400 hover:text-red-600 rounded-2xl transition-all active:scale-90"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
+                  <TransactionItem 
+                    key={transaction.id} 
+                    transaction={transaction} 
+                    index={index}
+                    onEdit={setEditingTransaction}
+                    onDelete={handleDelete}
+                  />
                 ))
               )}
             </div>

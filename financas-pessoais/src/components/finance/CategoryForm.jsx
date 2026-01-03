@@ -118,7 +118,18 @@ export default function CategoryForm({ onClose }) {
                       </div>
                       <span className="text-slate-700 font-medium">{cat.label}</span>
                     </div>
-                    <button onClick={() => deleteMutation.mutate(cat.id)} className="opacity-0 group-hover:opacity-100 p-2 text-slate-300 hover:text-red-500 transition-all">
+                    <button 
+                      onClick={() => {
+                        toast.warning("Eliminar categoria?", {
+                          description: "Esta ação não pode ser desfeita.",
+                          action: {
+                            label: "Eliminar",
+                            onClick: () => deleteMutation.mutate(cat.id),
+                          },
+                        });
+                      }} 
+                      className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all active:scale-90"
+                    >
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
