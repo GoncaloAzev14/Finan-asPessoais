@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef } from "react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";
@@ -66,6 +66,25 @@ export default function TransactionItem({ transaction, index, onEdit, onDelete }
     if (timerRef.current) clearTimeout(timerRef.current);
   };
 
+  // Handlers separados para garantir execução no mobile
+  const handleEdit = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsOpen(false);
+    if (onEdit) {
+      onEdit(transaction);
+    }
+  };
+
+  const handleDelete = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsOpen(false);
+    if (onDelete) {
+      onDelete(transaction.id);
+    }
+  };
+
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
@@ -106,20 +125,14 @@ export default function TransactionItem({ transaction, index, onEdit, onDelete }
 
       <PopoverContent className="w-48 p-2 flex flex-col gap-1 shadow-xl border-slate-200 z-50 bg-white">
         <button
-          onClick={() => {
-            setIsOpen(false);
-            onEdit(transaction);
-          }}
+          onClick={handleEdit}
           className="flex items-center gap-2 w-full p-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
         >
           <Pencil className="w-4 h-4" />
           Editar item
         </button>
         <button
-          onClick={() => {
-            setIsOpen(false);
-            onDelete(transaction.id);
-          }}
+          onClick={handleDelete}
           className="flex items-center gap-2 w-full p-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
         >
           <Trash2 className="w-4 h-4" />
