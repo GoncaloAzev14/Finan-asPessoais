@@ -21,7 +21,7 @@ export default function Dashboard() {
 
   const { data: transactions = [], isLoading: loadingTransactions } = useQuery({
     queryKey: ["transactions"],
-    queryFn: () => base44.entities.Transaction.list()
+    queryFn: () => base44.entities.Transaction.list("-date")
   });
 
   React.useEffect(() => {
@@ -69,6 +69,10 @@ export default function Dashboard() {
 
   const formatCurrency = (value) => 
     `€ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+
+  const sortedTransactions = [...transactions].sort((a, b) => {
+    return new Date(b.date) - new Date(a.date);
+  });
 
   return (
     <div className="space-y-8 pb-8">
@@ -139,7 +143,7 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="space-y-3">
-            {transactions.slice(0, 5).map((transaction, index) => (
+            {sortedTransactions.slice(0, 5).map((transaction, index) => (
               <TransactionItem key={transaction.id} transaction={transaction} index={index} />
             ))}
           </div>

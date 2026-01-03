@@ -36,12 +36,14 @@ export default function Transactions() {
     },
   });
 
-  const filteredTransactions = transactions.filter((t) => {
-    const matchesSearch = t.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         t.category?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = filterType === "all" || t.type === filterType;
-    return matchesSearch && matchesType;
-  });
+  const filteredTransactions = transactions
+    .filter((t) => {
+      const matchesSearch = t.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           t.category?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesType = filterType === "all" || t.type === filterType;
+      return matchesSearch && matchesType;
+    })
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
 
   const handleDelete = (id) => {
     toast.warning("Tem a certeza que deseja eliminar?", {
