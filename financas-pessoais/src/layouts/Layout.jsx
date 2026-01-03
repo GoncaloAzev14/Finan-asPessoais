@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { LayoutDashboard, ArrowLeftRight, Target, Wallet, Settings } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -29,6 +29,10 @@ const navItems = [
 export default function Layout({ children }) {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   const currentPage = navItems.find(item => item.path === location.pathname) || { name: "Finanças", description: "Gestão pessoal" };
 

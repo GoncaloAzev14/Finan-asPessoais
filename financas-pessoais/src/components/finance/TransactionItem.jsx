@@ -51,15 +51,18 @@ export default function TransactionItem({ transaction, index, onEdit, onDelete }
   const [isOpen, setIsOpen] = useState(false);
   const timerRef = useRef(null);
 
+  const isEditable = !!onEdit || !!onDelete;
+
   const isIncome = transaction.type === "income";
-
   const hasCustomIcon = transaction.icon;
-  const FallbackIcon = categoryIcons[transaction.category] || MoreHorizontal;
-
-  const categoryLabel = categoryLabels[transaction.category] ||
+  const FallbackIcon = categoryIcons?.[transaction.category] || MoreHorizontal;
+  
+  const categoryLabel = categoryLabels?.[transaction.category] ||
                         (transaction.category ? transaction.category.charAt(0).toUpperCase() + transaction.category.slice(1) : "Geral");
 
   const handleTouchStart = () => {
+    if (!isEditable) return;
+
     timerRef.current = setTimeout(() => {
       setIsOpen(true);
       if (navigator.vibrate) navigator.vibrate(50);
@@ -75,7 +78,7 @@ export default function TransactionItem({ transaction, index, onEdit, onDelete }
     e.stopPropagation();
     setIsOpen(false);
     setTimeout(() => {
-        action();
+        if(action) action();
     }, 0);
   };
 
@@ -86,18 +89,21 @@ export default function TransactionItem({ transaction, index, onEdit, onDelete }
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: index * 0.05 }}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          onMouseDown={handleTouchStart}
-          onMouseUp={handleTouchEnd}
-          onMouseLeave={handleTouchEnd}
-          className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white rounded-xl border border-slate-100 active:bg-slate-50 transition-colors select-none cursor-pointer gap-3 sm:gap-0"
+          onTouchStart={isEditable ? handleTouchStart : undefined}
+          onTouchEnd={isEditable ? handleTouchEnd : undefined}
+          onMouseDown={isEditable ? handleTouchStart : undefined}
+          onMouseUp={isEditable ? handleTouchEnd : undefined}
+          onMouseLeave={isEditable ? handleTouchEnd : undefined}
+          
+          className={`flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white rounded-xl border border-slate-100 active:bg-slate-50 transition-colors gap-3 sm:gap-0 ${
+            isEditable ? "cursor-pointer select-none" : ""
+          }`}
         >
           <div className="flex items-center gap-4 w-full">
-            {/* Renderização do Ícone */}
+            {/* Ícone */}
             <div className={`w-12 h-12 flex items-center justify-center rounded-xl shrink-0 text-xl border ${
-              isIncome 
-                ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
+              isIncome
+                ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
                 : 'bg-slate-50 text-slate-600 border-slate-100'
             }`}>
               {hasCustomIcon ? (
@@ -125,24 +131,27 @@ export default function TransactionItem({ transaction, index, onEdit, onDelete }
         </motion.div>
       </PopoverTrigger>
 
-      <PopoverContent className="w-48 p-2 flex flex-col gap-1 shadow-xl border-slate-200 z-50 bg-white">
-        <div
-          onClick={(e) => handleAction(e, () => onEdit(transaction))}
-          onTouchEnd={(e) => handleAction(e, () => onEdit(transaction))}
-          className="flex items-center gap-2 w-full p-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
-        >
-          <Pencil className="w-4 h-4" />
-          Editar item
-        </div>
-        <div
-          onClick={(e) => handleAction(e, () => onDelete(transaction.id))}
-          onTouchEnd={(e) => handleAction(e, () => onDelete(transaction.id))}
-          className="flex items-center gap-2 w-full p-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-        >
-          <Trash2 className="w-4 h-4" />
-          Eliminar
-        </div>
-      </PopoverContent>
+      {/* Conteúdo do Menu Popover */}
+      {isEditable && (
+        <PopoverContent className="w-48 p-2 flex flex-col gap-1 shadow-xl border-slate-200 z-50 bg-white">
+          <div
+            onClick={(e) => handleAction(e, () => onEdit && onEdit(transaction))}
+            onTouchEnd={(e) => handleAction(e, () => onEdit && onEdit(transaction))}
+            className="flex items-center gap-2 w-full p-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+          >
+            <Pencil className="w-4 h-4" />
+            Editar item
+          </div>
+          <div
+            onClick={(e) => handleAction(e, () => onDelete && onDelete(transaction.id))}
+            onTouchEnd={(e) => handleAction(e, () => onDelete && onDelete(transaction.id))}
+            className="flex items-center gap-2 w-full p-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+          >
+            <Trash2 className="w-4 h-4" />
+            Eliminar
+          </div>
+        </PopoverContent>
+      )}
     </Popover>
   );
 }
