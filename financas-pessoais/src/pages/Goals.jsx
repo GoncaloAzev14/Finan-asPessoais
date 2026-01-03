@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { firebaseDb as base44 } from "./../api/firestoreClient";
 import { AnimatePresence, motion } from "framer-motion";
@@ -40,6 +40,13 @@ function GoalForm({ goal, onSubmit, onClose }) {
     deadline: "",
     icon: "target"
   });
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();

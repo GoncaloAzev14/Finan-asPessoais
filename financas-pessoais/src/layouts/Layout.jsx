@@ -137,11 +137,9 @@ export default function Layout({ children }) {
         </div>
       </nav>
 
-      <AnimatePresence>
-        {isSettingsModalOpen && (
-          <CategoryForm onClose={() => setIsSettingsModalOpen(false)} />
-        )}
-      </AnimatePresence>
+      {isSettingsModalOpen && (
+        <CategoryForm onClose={() => setIsSettingsModalOpen(false)} />
+      )}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { firebaseDb } from "./../../api/firestoreClient";
 import { motion, AnimatePresence } from "framer-motion";
@@ -32,6 +32,15 @@ const defaultCategories = {
 
 export default function TransactionForm({ onSubmit, onClose, transaction }) {
   const [type, setType] = useState(transaction?.type || "expense");
+
+  useEffect(() => {
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = 'hidden';
+    
+    return () => {
+      document.body.style.overflow = originalStyle;
+    };
+  }, []);
   
   const { data: dbCategories = [] } = useQuery({
     queryKey: ["categories"],
