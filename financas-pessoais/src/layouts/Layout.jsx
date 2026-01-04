@@ -75,19 +75,20 @@ export default function Layout({ children }) {
           <div className="max-w-7xl mx-auto px-6 sm:px-8 h-20 sm:h-24 flex items-center justify-between">
             <div className="overflow-hidden">
               <AnimatePresence mode="wait">
-                <motion.h1
+                <motion.div
                   key={location.pathname}
                   initial={{ y: 15, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -15, opacity: 0 }}
                   transition={{ duration: 0.2, ease: "easeOut" }}
-                  className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight"
                 >
-                  {currentPage.name}
-                </motion.h1>
-                <p className="text-sm font-medium text-slate-500 mt-0.5">
-                  {currentPage.description}
-                </p>
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                    {currentPage.name}
+                  </h1>
+                  <p className="text-sm font-medium text-slate-500 mt-0.5">
+                    {currentPage.description}
+                  </p>
+                </motion.div>
               </AnimatePresence>
             </div>
 
@@ -141,9 +142,11 @@ export default function Layout({ children }) {
         </div>
       </nav>
 
-      {isSettingsModalOpen && (
-        <CategoryForm onClose={() => setIsSettingsModalOpen(false)} />
-      )}
+      <AnimatePresence>
+        {isSettingsModalOpen && (
+          <CategoryForm key="settings-modal" onClose={() => setIsSettingsModalOpen(false)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
