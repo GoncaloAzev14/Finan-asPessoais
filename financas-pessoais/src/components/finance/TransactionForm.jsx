@@ -93,13 +93,13 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
         animate={{ y: 0 }}
         exit={{ y: "100%" }}
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        className="bg-white rounded-t-[2.5rem] sm:rounded-3xl w-full max-w-lg p-8 pb-10 space-y-6 shadow-2xl overflow-y-auto max-h-[95vh] relative"
+        className="bg-white rounded-t-[2.5rem] sm:rounded-3xl w-full max-w-lg p-6 pb-8 space-y-4 shadow-2xl overflow-y-auto max-h-[90vh] relative"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-2 sm:hidden" />
 
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+          <h2 className="text-xl font-black text-slate-900 tracking-tight">
             {transaction ? "Editar Item" : "Novo Registo"}
           </h2>
           <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full bg-slate-50 hover:bg-slate-100">
@@ -128,14 +128,14 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Descrição</Label>
             <Input
               placeholder="Ex: Assinatura Mensal"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="h-16 rounded-2xl bg-slate-50 border-none px-6 text-slate-900 font-medium placeholder:text-slate-300 focus:ring-2 focus:ring-slate-900/5"
+              className="h-12 rounded-2xl bg-slate-50 border-none px-6 text-slate-900 font-medium placeholder:text-slate-300 focus:ring-2 focus:ring-slate-900/5"
               required
             />
           </div>
@@ -151,7 +151,7 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
                   placeholder="0.00"
                   value={formData.amount}
                   onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                  className="h-16 rounded-2xl bg-slate-50 border-none pl-10 text-xl font-black text-slate-900 w-full"
+                  className="h-12 rounded-2xl bg-slate-50 border-none pl-10 text-xl font-black text-slate-900 w-full"
                   required
                 />
               </div>
@@ -163,7 +163,7 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
                 type="date"
                 value={formData.date}
                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                className="h-16 rounded-2xl bg-slate-50 border-none px-4 font-bold text-slate-700 w-full max-w-full"
+                className="h-12 rounded-2xl bg-slate-50 border-none px-4 font-bold text-slate-700 w-full max-w-full"
                 required
               />
             </div>
@@ -176,7 +176,7 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
               onValueChange={(value) => setFormData({ ...formData, category: value })}
               required
             >
-              <SelectTrigger className="h-16 rounded-2xl bg-slate-50 border-none px-6 font-bold text-slate-700">
+              <SelectTrigger className="h-12 rounded-2xl bg-slate-50 border-none px-6 font-bold text-slate-700">
                 {selectedCategoryDisplay ? (
                   <span className="flex items-center gap-3">
                     <span className="text-xl">{selectedCategoryDisplay.icon || "🏷️"}</span>
@@ -201,16 +201,16 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
 
           <div
             onClick={() => setFormData({ ...formData, isFixed: !formData.isFixed })}
-            className={`flex items-center gap-4 p-5 rounded-3xl border-2 transition-all cursor-pointer ${
+            className={`flex items-center gap-4 p-4 rounded-3xl border-2 transition-all cursor-pointer ${
               formData.isFixed 
                 ? "bg-violet-50 border-violet-100" 
                 : "bg-slate-50 border-transparent active:bg-slate-100"
             }`}
           >
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${
+            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-colors ${
               formData.isFixed ? "bg-violet-500 text-white" : "bg-slate-200 text-slate-400"
             }`}>
-              <Repeat className="w-6 h-6" />
+              <Repeat className="w-5 h-5" />
             </div>
             <div className="flex-1">
               <p className="text-sm font-black text-slate-800">Transação Recorrente</p>
@@ -235,7 +235,7 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
                   value={formData.periodicity}
                   onValueChange={(value) => setFormData({ ...formData, periodicity: value })}
                 >
-                  <SelectTrigger className="h-14 rounded-2xl bg-white border-slate-200 shadow-sm px-6 font-bold text-slate-600">
+                  <SelectTrigger className="h-12 rounded-2xl bg-white border-slate-200 shadow-sm px-6 font-bold text-slate-600">
                     <SelectValue placeholder="Frequência" />
                   </SelectTrigger>
                   <SelectContent className="rounded-2xl">
@@ -251,7 +251,7 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
           <Button
             type="submit"
             style={{ backgroundColor: type === "income" ? "#10b981" : "#0f172a" }}
-            className="w-full h-18 rounded-4xl font-black text-white text-md shadow-2xl shadow-slate-900/10 transition-all active:scale-95 mt-6 tracking-widest uppercase"
+            className="w-full h-14 rounded-4xl font-black text-white text-md shadow-2xl shadow-slate-900/10 transition-all active:scale-95 mt-4 tracking-widest uppercase"
           >
             {transaction ? "Guardar Alterações" : `Adicionar ${type === "income" ? "Receita" : "Despesa"}`}
           </Button>

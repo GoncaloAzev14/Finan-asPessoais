@@ -70,14 +70,14 @@ function GoalForm({ goal, onSubmit, onClose }) {
         animate={{ y: 0 }}
         exit={{ y: "100%" }}
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        className="bg-white rounded-t-[2.5rem] sm:rounded-3xl w-full max-w-lg p-8 pb-10 space-y-6 shadow-2xl overflow-y-auto max-h-[95vh] relative"
+        className="bg-white rounded-t-[2.5rem] sm:rounded-3xl w-full max-w-lg p-6 pb-8 space-y-4 shadow-2xl overflow-y-auto max-h-[90vh] relative"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Handle visual para mobile */}
         <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-2 sm:hidden" />
 
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+          <h2 className="text-xl font-black text-slate-900 tracking-tight">
             {goal ? "Editar Meta" : "Nova Meta"}
           </h2>
           <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full bg-slate-50 hover:bg-slate-100">
@@ -85,7 +85,7 @@ function GoalForm({ goal, onSubmit, onClose }) {
           </Button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* Nome da Meta */}
           <div className="space-y-2">
             <Label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Nome da Meta</Label>
@@ -93,7 +93,7 @@ function GoalForm({ goal, onSubmit, onClose }) {
               placeholder="Ex: Viagem para Europa"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="h-16 rounded-2xl bg-slate-50 border-none px-6 text-slate-900 font-medium placeholder:text-slate-300 focus:ring-2 focus:ring-violet-500/5"
+              className="h-12 rounded-2xl bg-slate-50 border-none px-6 text-slate-900 font-medium placeholder:text-slate-300 focus:ring-2 focus:ring-violet-500/5"
               required
             />
           </div>
@@ -106,7 +106,7 @@ function GoalForm({ goal, onSubmit, onClose }) {
                 value={formData.icon}
                 onValueChange={(value) => setFormData({ ...formData, icon: value })}
               >
-                <SelectTrigger className="h-16 rounded-2xl bg-slate-50 border-none px-6 font-bold text-slate-700">
+                <SelectTrigger className="h-12 rounded-2xl bg-slate-50 border-none px-6 font-bold text-slate-700">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl border-slate-100">
@@ -129,7 +129,7 @@ function GoalForm({ goal, onSubmit, onClose }) {
                 type="date"
                 value={formData.deadline}
                 onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
-                className="h-16 rounded-2xl bg-slate-50 border-none px-4 font-bold text-slate-700"
+                className="h-12 rounded-2xl bg-slate-50 border-none px-4 font-bold text-slate-700"
               />
             </div>
           </div>
@@ -146,7 +146,7 @@ function GoalForm({ goal, onSubmit, onClose }) {
                   placeholder="0.00"
                   value={formData.target_amount}
                   onChange={(e) => setFormData({ ...formData, target_amount: e.target.value })}
-                  className="h-16 rounded-2xl bg-slate-50 border-none pl-12 text-xl font-black text-slate-900"
+                  className="h-12 rounded-2xl bg-slate-50 border-none pl-12 text-xl font-black text-slate-900"
                   required
                 />
               </div>
@@ -163,7 +163,7 @@ function GoalForm({ goal, onSubmit, onClose }) {
                   placeholder="0.00"
                   value={formData.current_amount}
                   onChange={(e) => setFormData({ ...formData, current_amount: e.target.value })}
-                  className="h-16 rounded-2xl bg-slate-50 border-none pl-12 text-xl font-black text-violet-600"
+                  className="h-12 rounded-2xl bg-slate-50 border-none pl-12 text-xl font-black text-violet-600"
                 />
               </div>
             </div>
@@ -171,7 +171,7 @@ function GoalForm({ goal, onSubmit, onClose }) {
 
           <Button
             type="submit"
-            className="w-full h-18 rounded-4xl font-black text-white text-md shadow-2xl bg-violet-600 hover:bg-violet-700 shadow-violet-500/20 transition-all active:scale-95 mt-6 tracking-widest uppercase"
+            className="w-full h-14 rounded-4xl font-black text-white text-md shadow-2xl bg-violet-600 hover:bg-violet-700 shadow-violet-500/20 transition-all active:scale-95 mt-4 tracking-widest uppercase"
           >
             {goal ? "Guardar Alterações" : "Criar Meta"}
           </Button>
