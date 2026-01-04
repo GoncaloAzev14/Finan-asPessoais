@@ -163,7 +163,8 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
                 type="date"
                 value={formData.date}
                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                className="h-12 rounded-2xl bg-slate-50 border-none px-4 font-bold text-slate-700 w-full max-w-full"
+                className="h-12 rounded-2xl bg-slate-50 border-none px-4 font-bold text-slate-700 w-full text-sm"
+                style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' }}
                 required
               />
             </div>

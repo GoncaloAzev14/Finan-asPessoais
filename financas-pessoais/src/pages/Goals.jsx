@@ -129,7 +129,8 @@ function GoalForm({ goal, onSubmit, onClose }) {
                 type="date"
                 value={formData.deadline}
                 onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
-                className="h-12 rounded-2xl bg-slate-50 border-none px-4 font-bold text-slate-700"
+                className="h-12 rounded-2xl bg-slate-50 border-none px-4 font-bold text-slate-700 text-sm"
+                style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' }}
               />
             </div>
           </div>

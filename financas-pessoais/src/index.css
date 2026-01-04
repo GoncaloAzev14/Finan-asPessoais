@@ -81,3 +81,38 @@
     @apply border-border outline-ring/50;
   }
 }
+
+/* iOS Date Picker Fix */
+input[type="date"] {
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  appearance: none;
+  min-height: 3rem;
+  font-size: 0.875rem;
+}
+
+/* Ensure date input doesn't expand on iOS */
+input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+/* Style the calendar icon on iOS */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  font-size: 1rem;
+  padding: 0;
+  margin-left: auto;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* Prevent iOS zoom on input focus */
+@supports (-webkit-touch-callout: none) {
+  input[type="date"] {
+    font-size: 16px !important;
+  }
+}
