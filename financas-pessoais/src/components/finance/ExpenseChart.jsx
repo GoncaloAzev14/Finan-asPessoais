@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import { motion } from "framer-motion";
 
 const categoryLabels = {
@@ -60,28 +60,25 @@ export default function ExpenseChart({ transactions }) {
     >
       <h3 className="text-lg font-semibold text-slate-900 mb-4">Despesas por Categoria</h3>
       <div className="flex flex-col lg:flex-row items-center gap-6">
-        {/* Chart Container com dimensões fixas */}
-        <div className="w-full lg:w-48 h-48 min-w-48 min-h-48">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                innerRadius={50}
-                outerRadius={80}
-                paddingAngle={2}
-                dataKey="value"
-              >
-                {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip
-                formatter={(value) => `€ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-              />
-            </PieChart>
-          </ResponsiveContainer>
+        <div className="w-full lg:w-auto flex justify-center">
+          <PieChart width={300} height={300}>
+            <Pie
+              data={data}
+              cx={150}
+              cy={150}
+              innerRadius={60}
+              outerRadius={100}
+              paddingAngle={2}
+              dataKey="value"
+            >
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip
+              formatter={(value) => `€ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+            />
+          </PieChart>
         </div>
 
         {/* Legend */}

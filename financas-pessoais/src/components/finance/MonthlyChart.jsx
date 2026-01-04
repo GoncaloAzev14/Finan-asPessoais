@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { motion } from "framer-motion";
 import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -67,34 +67,41 @@ export default function MonthlyChart({ transactions }) {
           </div>
         </div>
       </div>
-      <div className="h-64">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} barGap={8}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-            <XAxis
-              dataKey="month"
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: '#64748b', fontSize: 12 }}
-            />
-            <YAxis
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: '#64748b', fontSize: 12 }}
-              tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
-            />
-            <Tooltip
-              formatter={(value) => `€ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-              contentStyle={{
-                borderRadius: '12px',
-                border: '1px solid #e2e8f0',
-                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
-              }}
-            />
-            <Bar dataKey="income" name="Receitas" fill="#10B981" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="expense" name="Despesas" fill="#cbd5e1" radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
+      
+      {/* Chart - Dimensões fixas, scroll horizontal em mobile */}
+      <div className="w-full overflow-x-auto pb-2">
+        <BarChart 
+          width={600} 
+          height={280} 
+          data={data} 
+          barGap={8}
+          margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+          <XAxis
+            dataKey="month"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#64748b', fontSize: 12 }}
+          />
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#64748b', fontSize: 12 }}
+            tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
+            width={45}
+          />
+          <Tooltip
+            formatter={(value) => `€ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+            contentStyle={{
+              borderRadius: '12px',
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+            }}
+          />
+          <Bar dataKey="income" name="Receitas" fill="#10B981" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="expense" name="Despesas" fill="#cbd5e1" radius={[4, 4, 0, 0]} />
+        </BarChart>
       </div>
     </motion.div>
   );
