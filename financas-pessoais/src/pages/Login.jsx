@@ -57,74 +57,56 @@ export default function Login({ initialMode = "login", onBack }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 relative overflow-hidden">
-      <Toaster position="top-center" richColors />
-      
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-500/10 rounded-full blur-[120px]" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-teal-600/10 rounded-full blur-[120px]" />
-
-      {onBack && (
-        <motion.button
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          onClick={onBack}
-          className="absolute top-6 left-6 z-20 p-3 bg-white rounded-full text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all shadow-sm active:scale-95"
-        >
-          <ArrowLeft className="w-6 h-6" />
-        </motion.button>
-      )}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md z-10"
       >
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-linear-to-br from-emerald-500 to-teal-600 shadow-xl shadow-emerald-500/20 mb-6">
-            <Wallet className="w-8 h-8 text-white" />
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-linear-to-br from-emerald-500 to-teal-600 shadow-xl shadow-emerald-500/20 mb-4">
+            <Wallet className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-1">
             {isLogin ? "Bem-vindo de volta" : "Criar conta"}
           </h1>
-          <p className="text-slate-500 font-medium">
-            {isLogin ? "Gerir as tuas finanças nunca foi tão simples." : "Começa hoje a controlar o teu dinheiro."}
+          <p className="text-slate-500 text-sm font-medium">
+            Gerir as tuas finanças nunca foi tão simples.
           </p>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-xl rounded-[2.5rem] p-8 shadow-2xl shadow-slate-200/50 border border-white">
-          <div className="space-y-6">
-            
+        <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 shadow-2xl shadow-slate-200/50 border border-white">
+          <div className="space-y-4">
             <Button
               onClick={handleGoogleLogin}
               disabled={isSubmitting}
               variant="outline"
-              className="w-full h-14 rounded-2xl border-slate-200 hover:bg-slate-50 transition-all flex items-center justify-center gap-3 text-slate-700 font-semibold shadow-none"
+              className="w-full h-11 rounded-xl border-slate-200 hover:bg-slate-50 transition-all flex items-center justify-center gap-3 text-slate-700 font-semibold shadow-none text-sm"
             >
-              {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Chrome className="w-5 h-5 text-blue-500" />}
+              {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Chrome className="w-4 h-4 text-blue-500" />}
               Continuar com Google
             </Button>
 
-            <div className="relative flex items-center py-2">
+            <div className="relative flex items-center py-1">
               <div className="grow border-t border-slate-100"></div>
-              <span className="shrink mx-4 text-xs font-bold text-slate-400 uppercase tracking-widest">ou e-mail</span>
+              <span className="shrink mx-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">ou e-mail</span>
               <div className="grow border-t border-slate-100"></div>
             </div>
 
             {error && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                className="bg-red-50 text-red-600 text-sm p-3 rounded-xl font-medium border border-red-100 text-center"
-              >
+              <div className="bg-red-50 text-red-600 text-xs p-2.5 rounded-lg font-medium border border-red-100 text-center">
                 {error}
-              </motion.div>
+              </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">E-mail</label>
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">E-mail</label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
                   <Input
                     required
                     disabled={isSubmitting}
@@ -132,15 +114,15 @@ export default function Login({ initialMode = "login", onBack }) {
                     placeholder="exemplo@mail.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-12 h-14 bg-slate-50/50 border-slate-100 rounded-2xl focus:bg-white transition-all shadow-none"
+                    className="pl-10 h-11 bg-slate-50/50 border-slate-100 rounded-xl focus:bg-white transition-all shadow-none text-sm"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Palavra-passe</label>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Palavra-passe</label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
                   <Input
                     required
                     disabled={isSubmitting}
@@ -148,24 +130,25 @@ export default function Login({ initialMode = "login", onBack }) {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-12 h-14 bg-slate-50/50 border-slate-100 rounded-2xl focus:bg-white transition-all shadow-none"
+                    className="pl-10 h-11 bg-slate-50/50 border-slate-100 rounded-xl focus:bg-white transition-all shadow-none text-sm"
                   />
                 </div>
               </div>
 
-              <Button
+              <Button 
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-14 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold shadow-lg shadow-slate-900/20 transition-all flex items-center justify-center gap-2 group mt-6"
+                // Reduzido de h-14 para h-11 e mt-6 para mt-4
+                className="w-full h-11 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold shadow-lg shadow-slate-900/20 transition-all flex items-center justify-center gap-2 group mt-4 text-sm"
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                     A carregar...
                   </>
                 ) : (
                   <>
-                    {isLogin ? "Entrar" : "Criar Conta"}
+                    {isLogin ? "Entrar" : "Registar"}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </>
                 )}
@@ -174,11 +157,11 @@ export default function Login({ initialMode = "login", onBack }) {
           </div>
         </div>
 
-        <div className="text-center mt-8">
+        <div className="text-center mt-6">
           <button 
             disabled={isSubmitting}
             onClick={() => { setIsLogin(!isLogin); setError(""); }}
-            className="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors disabled:opacity-50"
+            className="text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors disabled:opacity-50"
           >
             {isLogin ? (
               <>Não tens conta? <span className="text-emerald-600">Regista-te aqui</span></>
