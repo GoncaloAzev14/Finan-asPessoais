@@ -37,6 +37,11 @@ export default function Transactions() {
     queryFn: () => base44.entities.Category.list()
   });
 
+  const filteredCategories = useMemo(() => {
+    if (filterType === "all") return categories;
+    return categories.filter(cat => cat.type === filterType);
+  }, [categories, filterType]);
+
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Transaction.delete(id),
     onSuccess: () => {
@@ -216,7 +221,7 @@ export default function Transactions() {
                     {["all", "expense", "income"].map((t) => (
                       <button
                         key={t}
-                        onClick={() => setFilterType(t)}
+                        onClick={() => {setFilterType(t); setFilterCategory("all");}}
                         className={`flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
                           filterType === t 
                             ? "bg-white text-slate-900 shadow-md" 
@@ -261,7 +266,7 @@ export default function Transactions() {
                       className="w-full h-14 pl-12 pr-4 bg-slate-50 rounded-2xl font-bold text-slate-700 appearance-none focus:ring-2 focus:ring-slate-900/5 outline-none"
                     >
                       <option value="all">Todas as categorias</option>
-                      {categories.map(cat => (
+                      {filteredCategories.map(cat => (
                         <option key={cat.id} value={cat.value}>
                           {cat.icon || "🏷️"} {cat.label}
                         </option>

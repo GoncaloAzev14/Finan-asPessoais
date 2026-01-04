@@ -1,39 +1,30 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
-import { Wallet, Mail, Lock, ArrowRight, Chrome, Loader2 } from "lucide-react"; // Importado Loader2
+import { Wallet, Mail, Lock, ArrowRight, Chrome, Loader2, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 
-export default function Login() {
-  const [isLogin, setIsLogin] = useState(true);
+export default function Login({ initialMode = "login", onBack }) {
+  const [isLogin, setIsLogin] = useState(initialMode === "login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false); // Novo estado para o clique no botão
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { login, register, loginWithGoogle, loading } = useAuth();
-  const navigate = useNavigate();
+  const { login, register, loginWithGoogle } = useAuth();
 
-  // Se o AuthContext ainda estiver a verificar a sessão inicial (onAuthStateChanged)
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center">
-        <Loader2 className="w-10 h-10 text-emerald-600 animate-spin mb-4" />
-        <p className="text-slate-600 font-medium animate-pulse">A carregar...</p>
-      </div>
-    );
-  }
+  useEffect(() => {
+    setIsLogin(initialMode === "login");
+  }, [initialMode]);
 
   const handleGoogleLogin = async () => {
     try {
       setIsSubmitting(true);
       setError("");
       await loginWithGoogle();
-      navigate("/");
     } catch (error) {
       setError("Erro ao autenticar com Google.");
       console.error(error);
@@ -45,6 +36,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setError("");
     try {
       if (isLogin) {
         await login(email, password);
@@ -53,11 +45,12 @@ export default function Login() {
         await register(email, password);
         toast.success("Conta criada com sucesso!");
       }
-      navigate("/");
     } catch (err) {
+      console.error(err);
       toast.error("Falha na autenticação", {
         description: "Verifique as suas credenciais e tente novamente."
       });
+      setError("Falha na autenticação. Verifique os dados.");
     } finally {
       setIsSubmitting(false);
     }
@@ -65,10 +58,23 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 relative overflow-hidden">
+      <Toaster position="top-center" richColors />
+      
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-500/10 rounded-full blur-[120px]" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-teal-600/10 rounded-full blur-[120px]" />
 
-      <motion.div 
+      {onBack && (
+        <motion.button
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          onClick={onBack}
+          className="absolute top-6 left-6 z-20 p-3 bg-white rounded-full text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all shadow-sm active:scale-95"
+        >
+          <ArrowLeft className="w-6 h-6" />
+        </motion.button>
+      )}
+
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md z-10"
@@ -81,16 +87,17 @@ export default function Login() {
             {isLogin ? "Bem-vindo de volta" : "Criar conta"}
           </h1>
           <p className="text-slate-500 font-medium">
-            Gerir as tuas finanças nunca foi tão simples.
+            {isLogin ? "Gerir as tuas finanças nunca foi tão simples." : "Começa hoje a controlar o teu dinheiro."}
           </p>
         </div>
 
         <div className="bg-white/80 backdrop-blur-xl rounded-[2.5rem] p-8 shadow-2xl shadow-slate-200/50 border border-white">
           <div className="space-y-6">
-            <Button 
+            
+            <Button
               onClick={handleGoogleLogin}
               disabled={isSubmitting}
-              variant="outline" 
+              variant="outline"
               className="w-full h-14 rounded-2xl border-slate-200 hover:bg-slate-50 transition-all flex items-center justify-center gap-3 text-slate-700 font-semibold shadow-none"
             >
               {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Chrome className="w-5 h-5 text-blue-500" />}
@@ -104,9 +111,13 @@ export default function Login() {
             </div>
 
             {error && (
-              <div className="bg-red-50 text-red-600 text-sm p-3 rounded-xl font-medium border border-red-100 text-center">
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                className="bg-red-50 text-red-600 text-sm p-3 rounded-xl font-medium border border-red-100 text-center"
+              >
                 {error}
-              </div>
+              </motion.div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -114,11 +125,11 @@ export default function Login() {
                 <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">E-mail</label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
-                  <Input 
+                  <Input
                     required
                     disabled={isSubmitting}
-                    type="email" 
-                    placeholder="exemplo@mail.com" 
+                    type="email"
+                    placeholder="exemplo@mail.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-12 h-14 bg-slate-50/50 border-slate-100 rounded-2xl focus:bg-white transition-all shadow-none"
@@ -130,11 +141,11 @@ export default function Login() {
                 <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Palavra-passe</label>
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
-                  <Input 
+                  <Input
                     required
                     disabled={isSubmitting}
-                    type="password" 
-                    placeholder="••••••••" 
+                    type="password"
+                    placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-12 h-14 bg-slate-50/50 border-slate-100 rounded-2xl focus:bg-white transition-all shadow-none"
@@ -142,7 +153,7 @@ export default function Login() {
                 </div>
               </div>
 
-              <Button 
+              <Button
                 type="submit"
                 disabled={isSubmitting}
                 className="w-full h-14 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold shadow-lg shadow-slate-900/20 transition-all flex items-center justify-center gap-2 group mt-6"
@@ -154,7 +165,7 @@ export default function Login() {
                   </>
                 ) : (
                   <>
-                    {isLogin ? "Entrar" : "Registar"}
+                    {isLogin ? "Entrar" : "Criar Conta"}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </>
                 )}

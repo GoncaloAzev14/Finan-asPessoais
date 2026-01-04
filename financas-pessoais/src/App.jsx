@@ -1,15 +1,18 @@
+import React, { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './layouts/Layout';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Goals from './pages/Goals';
-import { useAuth } from "./contexts/AuthContext";
-import Login from './pages/Login';
 import CategorySettings from "./pages/CategorySettings";
+import Login from './pages/Login';
+import Landing from './pages/Landing';
+import { useAuth } from "./contexts/AuthContext";
 import { Toaster } from 'sonner';
 
 function App() {
   const { user, loading } = useAuth();
+  const [authView, setAuthView] = useState("landing");
 
   if (loading) {
     return (
@@ -23,11 +26,17 @@ function App() {
   }
 
   if (!user) {
+    // 1. Mostra a Landing Page
+    if (authView === "landing") {
+      return <Landing onNavigate={setAuthView} />;
+    }
+    
+    // 2. Ou mostra o Login/Signup (com botão de voltar)
     return (
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
+      <Login
+        initialMode={authView} // 'login' ou 'signup'
+        onBack={() => setAuthView("landing")}
+      />
     );
   }
 
@@ -40,7 +49,6 @@ function App() {
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/goals" element={<Goals />} />
           <Route path="/categories" element={<CategorySettings />} />
-          <Route path="/login" element={<Navigate to="/" replace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>
