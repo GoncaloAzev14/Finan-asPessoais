@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { firebaseDb } from "./../../api/firestoreClient";
 import { useAuth } from "./../../contexts/AuthContext";
@@ -35,7 +35,7 @@ export default function CategoryForm({ onClose }) {
     onSuccess: () => {
       queryClient.invalidateQueries(["categories"]);
       setNewCategory("");
-      setSelectedIcon("🏷️"); // Reset do ícone
+      setSelectedIcon("🏷️");
     }
   });
 
@@ -76,6 +76,12 @@ export default function CategoryForm({ onClose }) {
   };
 
   const filteredCategories = categories.filter(c => c.type === type);
+
+  useEffect(() => {
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = originalStyle; };
+  }, []);
 
   return (
     <motion.div

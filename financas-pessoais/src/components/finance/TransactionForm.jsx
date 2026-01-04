@@ -140,7 +140,7 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Valor</Label>
               <div className="relative">
@@ -151,7 +151,7 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
                   placeholder="0.00"
                   value={formData.amount}
                   onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                  className="h-16 rounded-2xl bg-slate-50 border-none pl-10 text-xl font-black text-slate-900"
+                  className="h-16 rounded-2xl bg-slate-50 border-none pl-10 text-xl font-black text-slate-900 w-full"
                   required
                 />
               </div>
@@ -163,7 +163,7 @@ export default function TransactionForm({ onSubmit, onClose, transaction }) {
                 type="date"
                 value={formData.date}
                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                className="h-16 rounded-2xl bg-slate-50 border-none px-4 font-bold text-slate-700"
+                className="h-16 rounded-2xl bg-slate-50 border-none px-4 font-bold text-slate-700 w-full max-w-full"
                 required
               />
             </div>

@@ -42,7 +42,7 @@ export default function MonthlyChart({ transactions }) {
       >
         <h3 className="text-lg font-semibold text-slate-900 mb-4">Evolução Mensal</h3>
         <div className="h-64 flex items-center justify-center text-slate-400">
-          Nenhuma transação registrada
+          Nenhuma transação registada
         </div>
       </motion.div>
     );

@@ -46,7 +46,7 @@ export default function ExpenseChart({ transactions }) {
       >
         <h3 className="text-lg font-semibold text-slate-900 mb-4">Despesas por Categoria</h3>
         <div className="h-48 flex items-center justify-center text-slate-400">
-          Nenhuma despesa registrada
+          Nenhuma despesa registada
         </div>
       </motion.div>
     );
